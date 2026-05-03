@@ -308,21 +308,18 @@
   /* Mobile Sidebar Toggle - Visible only on mobile */
   .mobile-toggle-btn {
     display: none;
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 10000;
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     border-radius: 12px;
     background: var(--navy);
     color: white;
     border: none;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-size: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     cursor: pointer;
+    flex-shrink: 0;
   }
   
   .sidebar-nav {
@@ -342,12 +339,12 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    padding: 12px 16px;
+    padding: 14px 20px; /* Slightly more padding for touch */
     border-radius: 12px;
     color: rgba(255,255,255,0.7);
     text-decoration: none;
     font-weight: 500;
-    font-size: 0.95rem;
+    font-size: 1rem; /* Slightly larger font */
     transition: all 0.2s;
     cursor: pointer;
     white-space: nowrap;
@@ -630,15 +627,18 @@
 
   @media (max-width: 768px) {
     header {
-      padding: 0 16px 0 72px; /* Adjusted space for mobile toggle */
+      padding: 0 16px;
       height: 80px;
     }
+    .header-left {
+      gap: 16px;
+    }
     .header-logo-section {
-      gap: 12px;
-      min-width: 0; /* Allow shrinking */
+      gap: 10px;
+      min-width: 0;
     }
     .logo-icon {
-      height: 48px;
+      height: 44px;
       flex-shrink: 0;
     }
     .logo-text-wrapper {
@@ -646,13 +646,13 @@
       overflow: hidden;
     }
     .sidebar-logo-text {
-      font-size: 1.1rem;
+      font-size: 1rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .sidebar-logo-sub {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -676,26 +676,31 @@
 
   @media (max-width: 480px) {
     header {
-      height: 72px;
-      padding-left: 64px;
+      height: 64px;
+      padding: 0 12px;
     }
     .mobile-toggle-btn {
-      top: 12px;
-      left: 12px;
-      width: 44px;
-      height: 44px;
+      width: 38px;
+      height: 38px;
+      font-size: 18px;
+    }
+    .header-left {
+      gap: 10px;
     }
     .header-logo-section {
-      max-width: 160px;
+      max-width: 140px;
     }
     .logo-icon {
-      height: 40px;
+      height: 34px;
     }
     .sidebar-logo-text {
-      font-size: 1rem;
+      font-size: 0.9rem;
     }
     .sidebar-logo-sub {
       display: none;
+    }
+    #headerYear {
+      display: none; /* Hide year on very small screens */
     }
     .stats-grid {
       grid-template-columns: 1fr;
@@ -705,15 +710,26 @@
       display: none;
     }
     .header-right {
-      gap: 10px;
+      gap: 8px;
     }
     .user-profile {
-      padding: 4px;
-      border-radius: 50%;
+      padding: 2px;
+      background: transparent;
     }
     .avatar {
+      width: 34px;
+      height: 34px;
+      font-size: 0.85rem;
+    }
+    .notif-btn {
       width: 36px;
       height: 36px;
+      font-size: 18px;
+    }
+    .notif-panel {
+      top: 72px;
+      right: 12px;
+      width: calc(100vw - 24px);
     }
     .alert-banner {
       flex-direction: column;
@@ -767,7 +783,7 @@
   .stat-card {
     background: var(--white);
     border-radius: var(--radius);
-    padding: 22px 24px;
+    padding: 16px 20px; /* Reduced padding for mobile */
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--slate-200);
     position: relative;
@@ -788,7 +804,7 @@
   .stat-card.alert::before   { background: var(--amber); }
 
   .stat-label {
-    font-size: .75rem;
+    font-size: clamp(0.65rem, 2.5vw, 0.75rem);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: .08em;
@@ -796,7 +812,7 @@
     margin-bottom: 10px;
   }
   .stat-value {
-    font-size: 2.2rem;
+    font-size: clamp(1.6rem, 8vw, 2.2rem);
     font-weight: 800;
     letter-spacing: -.04em;
     line-height: 1;
@@ -1647,11 +1663,6 @@
 <!-- ══════════ APP SHELL ══════════ -->
 <div id="appShell" class="hidden">
 
-  <!-- Mobile Toggle Button -->
-  <button class="mobile-toggle-btn" onclick="toggleSidebar()">
-    ☰
-  </button>
-
   <!-- SIDEBAR -->
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -1692,6 +1703,11 @@
     <!-- HEADER -->
     <header>
       <div class="header-left">
+        <!-- Mobile Toggle Button (Visible only on mobile) -->
+        <button class="mobile-toggle-btn" onclick="toggleSidebar()">
+          ☰
+        </button>
+
         <div class="header-logo-section">
           <div class="logo-icon">
             <img src="CK.png" alt="Logo">
