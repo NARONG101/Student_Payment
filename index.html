@@ -92,7 +92,13 @@
     width: 100%;
     height: auto;
     object-fit: contain;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+  }
+  .login-logo-icon img:hover {
+    transform: scale(1.08) rotate(-2deg);
+    filter: drop-shadow(0 12px 24px rgba(37,99,235,0.2));
   }
   .login-logo-text { font-size: 1.5rem; font-weight: 800; color: var(--navy); letter-spacing: -.03em; }
   .login-logo-sub { font-size: .75rem; color: var(--slate-400); font-weight: 500; }
@@ -240,6 +246,12 @@
     height: 100%;
     width: auto;
     object-fit: contain;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .logo-icon img:hover {
+    transform: scale(1.1) brightness(1.1);
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
   }
 
   .header-right {
@@ -474,6 +486,15 @@
   @keyframes shimmer {
     0%   { transform: translateX(0); }
     100% { transform: translateX(400px); }
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .animate-pop {
+    animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   }
   .progress-labels {
     display: flex;
@@ -1186,7 +1207,7 @@
 <div id="loginScreen">
   <div class="login-card">
     <div class="login-logo">
-      <div class="login-logo-icon">
+      <div class="login-logo-icon animate-pop">
         <img src="CK.png" alt="Logo">
       </div>
       <div>
