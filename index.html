@@ -278,9 +278,9 @@
     color: white;
     display: flex;
     flex-direction: column;
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    z-index: 200;
+    z-index: 9999; /* Increased for mobile visibility */
     box-shadow: 4px 0 20px rgba(0,0,0,0.15);
     flex-shrink: 0;
   }
@@ -293,9 +293,29 @@
     padding: 0 16px;
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* Move button to the side */
+    justify-content: flex-start;
     border-bottom: 1px solid rgba(255,255,255,0.05);
     overflow: hidden;
+  }
+
+  /* Mobile Sidebar Toggle - Visible only on mobile */
+  .mobile-toggle-btn {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 10000;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    cursor: pointer;
   }
   
   .sidebar-nav {
@@ -573,44 +593,53 @@
       position: fixed;
       left: -280px;
       height: 100vh;
+      width: 280px;
     }
     .sidebar.open {
       left: 0;
     }
     .sidebar.collapsed {
-      width: 280px;
       left: -280px;
     }
     .sidebar.collapsed.open {
       left: 0;
     }
+    .mobile-toggle-btn {
+      display: flex; /* Show on tablet/mobile */
+    }
+    .toggle-sidebar-btn {
+      display: none; /* Hide internal sidebar toggle */
+    }
+    .content-wrapper {
+      width: 100%;
+    }
     .stats-grid {
       grid-template-columns: repeat(2, 1fr);
     }
     .two-col {
-      grid-template-columns: 1fr; /* Stack on tablet/mobile */
+      grid-template-columns: 1fr;
     }
   }
 
   @media (max-width: 768px) {
     header {
-      padding: 0 16px;
+      padding: 0 16px 0 80px; /* Space for mobile toggle */
       height: 80px;
     }
     .header-logo-section {
       gap: 12px;
     }
     .logo-icon {
-      height: 60px;
+      height: 48px;
     }
     .sidebar-logo-text {
-      font-size: 1.3rem;
+      font-size: 1.1rem;
     }
     .sidebar-logo-sub {
-      font-size: 0.75rem;
+      font-size: 0.65rem;
     }
     .page-title-badge {
-      display: none; /* Hide on small screens to save space */
+      display: none;
     }
     main {
       padding: 20px 16px;
@@ -620,32 +649,39 @@
       align-items: flex-start;
       gap: 16px;
     }
-    .section-header .flex {
-      width: 100%;
-      justify-content: space-between;
-    }
   }
 
   @media (max-width: 480px) {
+    header {
+      height: 72px;
+    }
+    .header-logo-section {
+      max-width: 140px;
+      overflow: hidden;
+    }
+    .logo-icon {
+      height: 40px;
+    }
+    .sidebar-logo-text {
+      font-size: 0.95rem;
+    }
+    .sidebar-logo-sub {
+      display: none;
+    }
     .stats-grid {
       grid-template-columns: 1fr;
+      gap: 12px;
     }
     .header-right .user-info {
       display: none;
     }
     .header-right {
-      gap: 12px;
-    }
-    .logo-icon {
-      height: 50px;
-    }
-    .sidebar-logo-text {
-      font-size: 1.1rem;
+      gap: 8px;
     }
     .alert-banner {
       flex-direction: column;
       text-align: center;
-      padding: 20px;
+      padding: 16px;
     }
     .alert-banner .btn {
       width: 100%;
@@ -653,9 +689,6 @@
     .toolbar {
       flex-direction: column;
       align-items: stretch;
-    }
-    .search-wrap {
-      min-width: 0;
     }
   }
 
@@ -1573,6 +1606,11 @@
 
 <!-- ══════════ APP SHELL ══════════ -->
 <div id="appShell" class="hidden">
+
+  <!-- Mobile Toggle Button -->
+  <button class="mobile-toggle-btn" onclick="toggleSidebar()">
+    ☰
+  </button>
 
   <!-- SIDEBAR -->
   <nav class="sidebar" id="sidebar">
