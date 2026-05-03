@@ -1,0 +1,3656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CK Takhmao School — Student Payment Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:       #0A1628;
+    --blue-deep:  #0D2B6B;
+    --blue-mid:   #1A4FBB;
+    --blue-core:  #2563EB;
+    --blue-light: #3B82F6;
+    --blue-soft:  #DBEAFE;
+    --blue-faint: #EFF6FF;
+    --white:      #FFFFFF;
+    --slate-50:   #F8FAFC;
+    --slate-100:  #F1F5F9;
+    --slate-200:  #E2E8F0;
+    --slate-400:  #94A3B8;
+    --slate-600:  #475569;
+    --slate-700:  #334155;
+    --slate-800:  #1E293B;
+    --green:      #10B981;
+    --green-soft: #D1FAE5;
+    --red:        #EF4444;
+    --red-soft:   #FEE2E2;
+    --amber:      #F59E0B;
+    --amber-soft: #FEF3C7;
+    --shadow-sm:  0 1px 3px rgba(10,22,40,.08), 0 1px 2px rgba(10,22,40,.06);
+    --shadow-md:  0 4px 16px rgba(10,22,40,.10);
+    --shadow-lg:  0 12px 40px rgba(10,22,40,.14);
+    --radius:     14px;
+    --radius-sm:  8px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--slate-100);
+    color: var(--slate-800);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── LOGIN SCREEN ── */
+  #loginScreen {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue-deep) 50%, var(--blue-mid) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  #loginScreen.hidden { display: none; }
+
+  .login-card {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 48px 44px 40px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 24px 80px rgba(0,0,0,.4);
+    position: relative;
+    overflow: hidden;
+  }
+  .login-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--blue-core), var(--blue-light), #60A5FA);
+  }
+  .login-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .login-logo-icon {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--blue-core), var(--blue-light));
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 4px 14px rgba(37,99,235,.4);
+  }
+  .login-logo-text { font-size: 1.5rem; font-weight: 800; color: var(--navy); letter-spacing: -.03em; }
+  .login-logo-sub { font-size: .75rem; color: var(--slate-400); font-weight: 500; }
+
+  .login-title { font-size: 1.25rem; font-weight: 800; color: var(--navy); margin-bottom: 6px; letter-spacing: -.02em; }
+  .login-sub { font-size: .82rem; color: var(--slate-400); margin-bottom: 28px; }
+
+  .login-group { margin-bottom: 18px; }
+  .login-label {
+    display: block;
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--slate-600);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 8px;
+  }
+  .login-input-wrap { position: relative; }
+  .login-input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--slate-400);
+    pointer-events: none;
+  }
+  .login-input {
+    width: 100%;
+    padding: 12px 42px 12px 42px;
+    border: 1.5px solid var(--slate-200);
+    border-radius: var(--radius-sm);
+    font-family: 'Sora', sans-serif;
+    font-size: .9rem;
+    color: var(--slate-800);
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    background: var(--white);
+  }
+  .login-input[type="password"] {
+    padding-right: 56px;
+  }
+  /* Hide browser's native password reveal button on ALL browsers */
+  .login-input[type="password"]::-webkit-credentials-auto-fill-button,
+  .login-input[type="password"]::-webkit-outer-spin-button,
+  .login-input[type="password"]::-webkit-inner-spin-button,
+  .login-input[type="password"]::-webkit-textfield-decoration-container,
+  .login-input[type="password"]::-webkit-caps-lock-indicator { display: none !important; -webkit-appearance: none; }
+  /* Hide Edge / IE native reveal button */
+  .login-input[type="password"]::-ms-reveal,
+  .login-input[type="password"]::-ms-clear { display: none !important; }
+  .login-input:focus {
+    border-color: var(--blue-core);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+  }
+  .toggle-pw-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--slate-400);
+    padding: 6px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: color .2s;
+  }
+  .toggle-pw-btn:hover {
+    color: var(--slate-600);
+  }
+  .toggle-pw-btn:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+  .login-error {
+    font-size: .78rem;
+    color: var(--red);
+    font-weight: 600;
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: var(--red-soft);
+    border-radius: var(--radius-sm);
+    display: none;
+  }
+  .login-btn {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, var(--blue-core), var(--blue-mid));
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'Sora', sans-serif;
+    font-size: .95rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 22px;
+    box-shadow: 0 4px 14px rgba(37,99,235,.4);
+    transition: all .2s;
+    letter-spacing: -.01em;
+  }
+  .login-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,.5); }
+  .login-btn:active { transform: translateY(0); }
+
+  /* ── APP SHELL ── */
+  #appShell { display: flex; flex-direction: column; min-height: 100vh; }
+  #appShell.hidden { display: none; }
+
+  /* ── TOPBAR ── */
+  header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue-deep) 60%, var(--blue-mid) 100%);
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,.25);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: -.02em;
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--blue-light), #60A5FA);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 0 2px rgba(255,255,255,.2);
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .notif-btn {
+    position: relative;
+    background: rgba(255,255,255,.12);
+    border: none;
+    border-radius: 10px;
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    transition: background .2s;
+  }
+  .notif-btn:hover { background: rgba(255,255,255,.22); }
+  .notif-dot {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 8px; height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    border: 2px solid var(--navy);
+  }
+
+  .avatar {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, #60A5FA, var(--blue-core));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: .85rem;
+    cursor: pointer;
+    border: 2px solid rgba(255,255,255,.3);
+  }
+  .logout-btn {
+    background: rgba(255,255,255,.12);
+    border: none;
+    border-radius: 8px;
+    padding: 7px 14px;
+    color: rgba(255,255,255,.8);
+    font-family: 'Sora', sans-serif;
+    font-size: .78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .logout-btn:hover { background: rgba(255,255,255,.22); color: white; }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    background: var(--white);
+    border-bottom: 1px solid var(--slate-200);
+    display: flex;
+    gap: 0;
+    padding: 0 32px;
+    box-shadow: var(--shadow-sm);
+  }
+  .nav-tab {
+    padding: 14px 20px;
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--slate-400);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all .2s;
+    display: flex; align-items: center; gap: 8px;
+    white-space: nowrap;
+  }
+  .nav-tab:hover { color: var(--blue-core); }
+  .nav-tab.active {
+    color: var(--blue-core);
+    border-bottom-color: var(--blue-core);
+  }
+  .nav-tab .tab-icon { font-size: 16px; }
+
+  /* ── MAIN LAYOUT ── */
+  main {
+    flex: 1;
+    padding: 28px 32px;
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── SECTION TITLE ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .section-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -.03em;
+  }
+  .section-sub {
+    font-size: .8rem;
+    color: var(--slate-400);
+    margin-top: 2px;
+    font-weight: 400;
+  }
+
+  /* ── STAT CARDS ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--slate-200);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow .2s, transform .2s;
+    cursor: default;
+  }
+  .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .stat-card.total::before   { background: var(--blue-core); }
+  .stat-card.paid::before    { background: var(--green); }
+  .stat-card.unpaid::before  { background: var(--red); }
+  .stat-card.alert::before   { background: var(--amber); }
+
+  .stat-label {
+    font-size: .75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--slate-400);
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -.04em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-card.total .stat-value  { color: var(--blue-core); }
+  .stat-card.paid .stat-value   { color: var(--green); }
+  .stat-card.unpaid .stat-value { color: var(--red); }
+  .stat-card.alert .stat-value  { color: var(--amber); }
+
+  .stat-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: .72rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+  .stat-card.total .stat-badge  { background: var(--blue-faint);  color: var(--blue-core); }
+  .stat-card.paid .stat-badge   { background: var(--green-soft); color: var(--green); }
+  .stat-card.unpaid .stat-badge { background: var(--red-soft);   color: var(--red); }
+  .stat-card.alert .stat-badge  { background: var(--amber-soft); color: var(--amber); }
+
+  .stat-icon {
+    position: absolute;
+    right: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2.8rem;
+    opacity: .08;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--slate-200);
+    margin-bottom: 28px;
+  }
+  .progress-title {
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .progress-bar-wrap {
+    background: var(--slate-100);
+    border-radius: 99px;
+    height: 12px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--blue-core), var(--blue-light));
+    transition: width .8s cubic-bezier(.4,0,.2,1);
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -40px;
+    width: 30px; height: 100%;
+    background: rgba(255,255,255,.35);
+    animation: shimmer 2s infinite;
+  }
+  @keyframes shimmer {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(400px); }
+  }
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: .72rem;
+    color: var(--slate-400);
+    font-weight: 500;
+  }
+
+  /* ── ALERT BANNER ── */
+  .alert-banner {
+    background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+    border: 1px solid #FDE68A;
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .alert-banner-icon { font-size: 24px; }
+  .alert-banner-text { flex: 1; }
+  .alert-banner-text strong { color: #92400E; font-size: .875rem; display: block; margin-bottom: 2px; }
+  .alert-banner-text span   { color: #B45309; font-size: .78rem; }
+
+  /* ── DEADLINE LIST ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--slate-200);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--slate-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-title {
+    font-size: .9rem;
+    font-weight: 700;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-body { padding: 0; }
+
+  .deadline-item {
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid var(--slate-100);
+    transition: background .15s;
+  }
+  .deadline-item:last-child { border-bottom: none; }
+  .deadline-item:hover { background: var(--blue-faint); }
+
+  .deadline-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: .8rem;
+    flex-shrink: 0;
+  }
+  .deadline-info { flex: 1; min-width: 0; }
+  .deadline-name { font-size: .84rem; font-weight: 600; color: var(--slate-800); }
+  .deadline-grade { font-size: .72rem; color: var(--slate-400); }
+  .deadline-days {
+    font-size: .75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .days-urgent  { background: var(--red-soft);   color: var(--red); }
+  .days-soon    { background: var(--amber-soft);  color: var(--amber); }
+  .days-ok      { background: var(--green-soft);  color: var(--green); }
+
+  /* ── SEARCH & FILTER ── */
+  .toolbar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+  }
+  .search-icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--slate-400);
+    font-size: 15px;
+  }
+  .search-input {
+    width: 100%;
+    padding: 10px 14px 10px 38px;
+    border: 1.5px solid var(--slate-200);
+    border-radius: var(--radius-sm);
+    font-family: 'Sora', sans-serif;
+    font-size: .84rem;
+    color: var(--slate-800);
+    background: var(--white);
+    outline: none;
+    transition: border-color .2s;
+  }
+  .search-input:focus { border-color: var(--blue-core); }
+
+  .filter-select {
+    padding: 10px 14px;
+    border: 1.5px solid var(--slate-200);
+    border-radius: var(--radius-sm);
+    font-family: 'Sora', sans-serif;
+    font-size: .84rem;
+    color: var(--slate-800);
+    background: var(--white);
+    outline: none;
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+  .filter-select:focus { border-color: var(--blue-core); }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    font-family: 'Sora', sans-serif;
+    font-size: .84rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--blue-core);
+    color: white;
+    box-shadow: 0 2px 8px rgba(37,99,235,.35);
+  }
+  .btn-primary:hover {
+    background: var(--blue-deep);
+    box-shadow: 0 4px 14px rgba(37,99,235,.45);
+    transform: translateY(-1px);
+  }
+  .btn-outline {
+    background: var(--white);
+    color: var(--blue-core);
+    border: 1.5px solid var(--blue-soft);
+  }
+  .btn-outline:hover {
+    background: var(--blue-faint);
+    border-color: var(--blue-core);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--slate-600);
+    padding: 7px 12px;
+  }
+  .btn-ghost:hover { background: var(--slate-100); color: var(--slate-800); }
+  .btn-danger {
+    background: var(--red-soft);
+    color: var(--red);
+    border: none;
+  }
+  .btn-danger:hover { background: #FECACA; }
+  .btn-sm { padding: 6px 12px; font-size: .78rem; }
+
+  /* ── FOLDER GRID ── */
+  .folder-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .folder-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 2px solid var(--slate-200);
+    padding: 22px 16px 18px;
+    cursor: pointer;
+    transition: all .2s;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .folder-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--blue-core), var(--blue-light));
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .folder-card:hover {
+    border-color: var(--blue-light);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+  }
+  .folder-card:hover::before { opacity: 1; }
+
+  .folder-card.add-folder {
+    border: 2px dashed var(--slate-200);
+    background: var(--slate-100);
+  }
+  .folder-card.add-folder:hover {
+    border-color: var(--blue-core);
+    background: var(--blue-faint);
+  }
+
+  .folder-icon { font-size: 2.8rem; margin-bottom: 10px; display: block; }
+  .folder-name { font-size: .88rem; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .folder-count { font-size: .72rem; color: var(--slate-400); }
+  .folder-paid-bar {
+    margin-top: 10px;
+    height: 4px;
+    background: var(--slate-100);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .folder-paid-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--green);
+    transition: width .6s;
+  }
+
+  /* ── BREADCRUMB ── */
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    font-size: .82rem;
+    color: var(--slate-400);
+  }
+  .breadcrumb a {
+    color: var(--blue-core);
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb-sep { color: var(--slate-200); }
+
+  /* ── STUDENT TABLE ── */
+  .table-wrap {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--slate-200);
+    overflow: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+  }
+  thead tr {
+    background: linear-gradient(90deg, var(--blue-faint), var(--white));
+  }
+  th {
+    padding: 13px 14px;
+    text-align: left;
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--slate-400);
+    white-space: nowrap;
+    border-bottom: 1px solid var(--slate-200);
+  }
+  td {
+    padding: 12px 14px;
+    font-size: .82rem;
+    color: var(--slate-800);
+    border-bottom: 1px solid var(--slate-100);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tbody tr { transition: background .15s; }
+  tbody tr:hover { background: var(--blue-faint); }
+  tbody tr.paid-row { background: #F0FDF4; }
+  tbody tr.paid-row:hover { background: #DCFCE7; }
+  tbody tr.overdue-row { background: #FFF5F5; }
+  tbody tr.overdue-row:hover { background: #FEE2E2; }
+  tbody tr.duesoon-row { background: #FFFBEB; }
+  tbody tr.duesoon-row:hover { background: #FEF3C7; }
+
+  .student-name-cell { display: flex; align-items: center; gap: 10px; }
+  .student-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: .8rem;
+    flex-shrink: 0;
+  }
+  .s-name { font-weight: 600; font-size: .85rem; }
+  .s-id { font-size: .7rem; color: var(--slate-400); font-family: 'DM Mono', monospace; }
+
+  .gender-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: .72rem;
+    font-weight: 600;
+  }
+  .gender-m { background: #EFF6FF; color: #2563EB; }
+  .gender-f { background: #FDF2F8; color: #DB2777; }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: .75rem;
+    font-weight: 700;
+  }
+  .status-paid   { background: var(--green-soft); color: var(--green); }
+  .status-unpaid { background: var(--red-soft);   color: var(--red); }
+  .status-due    { background: var(--amber-soft);  color: var(--amber); }
+
+  /* ── PARENT CONTACT BADGE ── */
+  .contact-cell {
+    font-size: .78rem;
+    color: var(--slate-600);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .contact-cell .phone-icon { opacity: .5; }
+
+  .folder-card.future-month {
+    opacity: .55;
+    cursor: default;
+    pointer-events: none;
+  }
+  .folder-card.future-month:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--slate-200);
+  }
+
+  /* ── MONTH OWED ── */
+  .month-owed-wrap { display:flex; flex-direction:column; gap:3px; }
+  .month-tag {
+    display:inline-flex; align-items:center; gap:3px;
+    font-size:.68rem; font-weight:700;
+    padding:2px 8px; border-radius:20px;
+    white-space:nowrap;
+  }
+  .month-tag-paid    { background:var(--green-soft); color:var(--green); }
+  .month-tag-current { background:var(--amber-soft); color:var(--amber); }
+  .month-tag-overdue { background:var(--red-soft);   color:var(--red); }
+
+  /* ── AUTO-RENEW BADGE ── */
+  .renew-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: .68rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    background: var(--blue-faint);
+    color: var(--blue-core);
+    margin-left: 4px;
+  }
+
+  /* ── CHECKBOX BUTTON ── */
+  .pay-btn {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2.5px solid var(--slate-200);
+    background: var(--white);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+    color: transparent;
+    font-size: 15px;
+  }
+  .pay-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-soft); }
+  .pay-btn.paid {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+    box-shadow: 0 2px 8px rgba(16,185,129,.3);
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--slate-400);
+  }
+  .empty-icon { font-size: 3.5rem; margin-bottom: 14px; }
+  .empty-text { font-size: .9rem; font-weight: 600; color: var(--slate-600); margin-bottom: 6px; }
+  .empty-sub  { font-size: .8rem; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,22,40,.5);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--white);
+    border-radius: 18px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(20px) scale(.97);
+    transition: transform .25s;
+    overflow: hidden;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+  .modal-header {
+    background: linear-gradient(135deg, var(--navy), var(--blue-deep));
+    padding: 22px 26px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  .modal-title {
+    font-size: 1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .modal-close {
+    background: rgba(255,255,255,.12);
+    border: none;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+  }
+  .modal-close:hover { background: rgba(255,255,255,.24); }
+
+  .modal-body { padding: 26px; }
+
+  .form-group { margin-bottom: 18px; }
+  .form-label {
+    display: block;
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--slate-600);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .form-label .form-hint {
+    font-size: .7rem;
+    color: var(--slate-400);
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
+    margin-left: 6px;
+  }
+  .form-input, .form-select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--slate-200);
+    border-radius: var(--radius-sm);
+    font-family: 'Sora', sans-serif;
+    font-size: .875rem;
+    color: var(--slate-800);
+    background: var(--white);
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .form-input:focus, .form-select:focus {
+    border-color: var(--blue-core);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+  }
+  .form-section-title {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--blue-core);
+    margin: 20px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--blue-soft);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .modal-footer {
+    padding: 0 26px 26px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  /* ── AUTO RENEW INFO BOX ── */
+  .renew-info-box {
+    background: var(--blue-faint);
+    border: 1px solid var(--blue-soft);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: .78rem;
+    color: var(--blue-mid);
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+
+  /* ── NOTIFICATION PANEL ── */
+  .notif-panel {
+    position: fixed;
+    top: 70px; right: 16px;
+    width: 340px;
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--slate-200);
+    z-index: 150;
+    display: none;
+    overflow: hidden;
+  }
+  .notif-panel.open { display: block; }
+  .notif-panel-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--slate-100);
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--navy);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .notif-item {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--slate-50);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: background .15s;
+  }
+  .notif-item:hover { background: var(--blue-faint); }
+  .notif-dot2 { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .notif-text { font-size: .78rem; color: var(--slate-600); line-height: 1.5; }
+  .notif-time { font-size: .7rem; color: var(--slate-400); margin-top: 2px; }
+
+  /* ── REPORT PAGE ── */
+  .report-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-bottom: 24px; }
+  .report-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 22px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--slate-200);
+    text-align: center;
+  }
+  .report-icon { font-size: 2rem; margin-bottom: 10px; }
+  .report-val { font-size: 1.8rem; font-weight: 800; letter-spacing: -.04em; color: var(--navy); }
+  .report-lbl { font-size: .75rem; color: var(--slate-400); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-top: 4px; }
+
+  /* ── GRADE BAR CHART ── */
+  .bar-chart { display: flex; align-items: flex-end; gap: 18px; height: 120px; padding-bottom: 8px; margin: 20px 0 4px; }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+  .bar-fill {
+    width: 100%;
+    border-radius: 6px 6px 0 0;
+    min-height: 8px;
+    background: linear-gradient(180deg, var(--blue-light), var(--blue-core));
+    transition: height .6s;
+  }
+  .bar-val { font-size: .7rem; font-weight: 700; color: var(--blue-core); }
+  .bar-lbl { font-size: .72rem; color: var(--slate-400); }
+
+  /* ── TOAST ── */
+  .toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .toast {
+    background: var(--navy);
+    color: white;
+    padding: 14px 20px;
+    border-radius: var(--radius-sm);
+    font-size: .84rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn .3s ease;
+    min-width: 260px;
+  }
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+  }
+  .toast.success { background: linear-gradient(135deg, #065F46, var(--green)); }
+  .toast.warning { background: linear-gradient(135deg, #92400E, var(--amber)); }
+  .toast.info    { background: linear-gradient(135deg, var(--blue-deep), var(--blue-core)); }
+
+  /* ── SETTINGS ── */
+  .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .settings-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--slate-200);
+  }
+  .settings-card h3 { font-size: .9rem; font-weight: 700; color: var(--navy); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--slate-100);
+  }
+  .toggle-row:last-child { border-bottom: none; }
+  .toggle-label { font-size: .84rem; color: var(--slate-700); }
+  .toggle-sub { font-size: .72rem; color: var(--slate-400); }
+  .toggle {
+    width: 42px; height: 24px;
+    background: var(--slate-200);
+    border-radius: 99px;
+    cursor: pointer;
+    transition: background .2s;
+    position: relative;
+    flex-shrink: 0;
+    border: none;
+  }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: white;
+    transition: transform .2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,.2);
+  }
+  .toggle.on { background: var(--blue-core); }
+  .toggle.on::after { transform: translateX(18px); }
+
+  /* ── UTIL ── */
+  .mono { font-family: 'DM Mono', monospace; }
+  .text-muted { color: var(--slate-400); }
+  .flex-center { display: flex; align-items: center; justify-content: center; }
+  .gap-8 { gap: 8px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ LOGIN SCREEN ══════════ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">🎓</div>
+      <div>
+        <div class="login-logo-text">CK Takhmao School</div>
+        <div class="login-logo-sub">Student Payment Dashboard</div>
+      </div>
+    </div>
+    <div class="login-title">Welcome back</div>
+    <div class="login-sub">Sign in to access your school dashboard</div>
+
+    <div class="login-group">
+      <label class="login-label">Email Address</label>
+      <div class="login-input-wrap">
+        <span class="login-input-icon">✉️</span>
+        <input class="login-input" id="loginEmail" type="email" placeholder="admin@school.edu" autocomplete="email" />
+      </div>
+    </div>
+    <div class="login-group">
+      <label class="login-label">Password</label>
+      <div class="login-input-wrap">
+        <span class="login-input-icon">🔒</span>
+        <input class="login-input" id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter')doLogin()" />
+        <button type="button" id="togglePwBtn" class="toggle-pw-btn" onclick="togglePwVisibility()">👁</button>
+      </div>
+    </div>
+
+    <!-- Remember Me + Forgot -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;margin-bottom:2px;">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.82rem;color:var(--slate-600);font-weight:500;">
+        <input type="checkbox" id="rememberMe" style="width:16px;height:16px;accent-color:var(--blue-core);cursor:pointer;" />
+        Remember me for 30 days
+      </label>
+      <span style="font-size:.78rem;color:var(--slate-400);">Secure · Auto sign-out after 30 days</span>
+    </div>
+
+    <div class="login-error" id="loginError">❌ Incorrect email or password. Please try again.</div>
+    <button class="login-btn" onclick="doLogin()">Sign In →</button>
+
+    <!-- Session info box (shown when remembered session is active) -->
+    <div id="sessionInfoBox" style="display:none;margin-top:14px;background:var(--green-soft);border:1px solid #A7F3D0;border-radius:var(--radius-sm);padding:10px 14px;font-size:.78rem;color:#065F46;display:none;align-items:center;gap:8px;">
+      🔐 <span id="sessionInfoText"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ APP SHELL ══════════ -->
+<div id="appShell" class="hidden">
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">🎓</div>
+    CK Takhmao School
+  </div>
+  <div class="header-right">
+    <div style="color:rgba(255,255,255,.6);font-size:.8rem;font-weight:500;" id="headerYear">Academic Year 2024–25</div>
+    <button class="notif-btn" onclick="toggleNotif()">
+      🔔
+      <span class="notif-dot"></span>
+    </button>
+    <div class="avatar" title="Admin">CK</div>
+    <button class="logout-btn" onclick="doLogout()">⬅ Sign Out</button>
+  </div>
+</header>
+
+<!-- NOTIFICATION PANEL -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-panel-header">
+    Notifications
+    <button class="btn btn-ghost btn-sm" onclick="toggleNotif()">✕</button>
+  </div>
+  <div class="notif-item">
+    <div class="notif-dot2" style="background:var(--red)"></div>
+    <div>
+      <div class="notif-text">3 students in Grade 6 have overdue payments</div>
+      <div class="notif-time">2 minutes ago</div>
+    </div>
+  </div>
+  <div class="notif-item">
+    <div class="notif-dot2" style="background:var(--amber)"></div>
+    <div>
+      <div class="notif-text">Payment deadline for Grade 7 is in 5 days</div>
+      <div class="notif-time">1 hour ago</div>
+    </div>
+  </div>
+  <div class="notif-item">
+    <div class="notif-dot2" style="background:var(--green)"></div>
+    <div>
+      <div class="notif-text">Sophea Meas (Grade 9) completed payment</div>
+      <div class="notif-time">3 hours ago</div>
+    </div>
+  </div>
+  <div class="notif-item">
+    <div class="notif-dot2" style="background:var(--blue-core)"></div>
+    <div>
+      <div class="notif-text">New student Dara Pich enrolled in Grade 8</div>
+      <div class="notif-time">Yesterday</div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<nav class="nav-tabs">
+  <div class="nav-tab active" onclick="showPage('dashboard', this)">
+    <span class="tab-icon">📊</span> Dashboard
+  </div>
+  <div class="nav-tab" onclick="showPage('students', this)">
+    <span class="tab-icon">🗂️</span> Student Lists
+  </div>
+  <div class="nav-tab" onclick="showPage('reports', this)">
+    <span class="tab-icon">📈</span> Reports
+  </div>
+  <div class="nav-tab" onclick="showPage('settings', this)">
+    <span class="tab-icon">⚙️</span> Settings
+  </div>
+</nav>
+
+<main>
+
+<!-- ── DASHBOARD PAGE ── -->
+<div class="page active" id="page-dashboard">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Dashboard Overview</div>
+      <div class="section-sub" id="today-date"></div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-outline" onclick="exportCSV()">⬇ Export</button>
+      <button class="btn btn-primary" onclick="openAddStudentModal()">＋ Add Student</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <div class="stat-label">Total Students</div>
+      <div class="stat-value" id="stat-total">0</div>
+      <div class="stat-badge">📚 Enrolled</div>
+      <div class="stat-icon">👨‍🎓</div>
+    </div>
+    <div class="stat-card paid">
+      <div class="stat-label">Already Paid</div>
+      <div class="stat-value" id="stat-paid">0</div>
+      <div class="stat-badge">✅ Completed</div>
+      <div class="stat-icon">💳</div>
+    </div>
+    <div class="stat-card unpaid">
+      <div class="stat-label">Not Yet Paid</div>
+      <div class="stat-value" id="stat-unpaid">0</div>
+      <div class="stat-badge">⏳ Pending</div>
+      <div class="stat-icon">❗</div>
+    </div>
+    <div class="stat-card alert">
+      <div class="stat-label">Deadline Alert</div>
+      <div class="stat-value" id="stat-alert">0</div>
+      <div class="stat-badge">⚠️ Due Soon</div>
+      <div class="stat-icon">📅</div>
+    </div>
+  </div>
+
+  <div class="progress-card">
+    <div class="progress-title">
+      <span>Overall Payment Progress</span>
+      <span id="pct-label" style="font-size:.88rem;color:var(--blue-core);">0%</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="progress-labels">
+      <span id="progress-paid-lbl">0 paid</span>
+      <span id="progress-total-lbl">of 0 students</span>
+    </div>
+  </div>
+
+  <div class="alert-banner" id="alertBanner">
+    <div class="alert-banner-icon">⚠️</div>
+    <div class="alert-banner-text">
+      <strong>Payment Deadline Alert!</strong>
+      <span id="alertBannerText">Loading…</span>
+    </div>
+    <button class="btn btn-sm" style="background:#FDE68A;color:#92400E;border:none;" onclick="showPage('alerts')">View List</button>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">⏰ Students Due Soon</div>
+        <span style="font-size:.72rem;color:var(--slate-400);">Next 7 days</span>
+      </div>
+      <div class="card-body" id="deadlineList">
+        <div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">No deadlines soon</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">✅ Recently Paid</div>
+        <span style="font-size:.72rem;color:var(--slate-400);">Latest confirmed</span>
+      </div>
+      <div class="card-body" id="recentPaidList">
+        <div class="empty-state"><div class="empty-icon">💳</div><div class="empty-text">No payments yet</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── STUDENTS PAGE ── -->
+<div class="page" id="page-students">
+
+  <!-- LEVEL 1: Year folders -->
+  <div id="yearView">
+    <div class="section-header">
+      <div>
+        <div class="section-title">📅 Payment Records</div>
+        <div class="section-sub">Browse by academic year → month → student</div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-primary" onclick="openAddYearModal()">＋ Create Year Folder</button>
+      </div>
+    </div>
+    <div class="folder-grid" id="yearFolderGrid"></div>
+  </div>
+
+  <!-- LEVEL 2: Month folders inside a year -->
+  <div id="monthView" style="display:none;">
+    <div class="section-header">
+      <div>
+        <div class="breadcrumb">
+          <a onclick="backToYears()">📅 Payment Records</a>
+          <span class="breadcrumb-sep">›</span>
+          <span id="currentYearLabel" style="color:var(--slate-800);font-weight:700;"></span>
+        </div>
+        <div class="section-title" id="monthViewTitle"></div>
+        <div class="section-sub" id="monthViewSub"></div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-outline btn-sm" onclick="backToYears()">← Back</button>
+      </div>
+    </div>
+    <div class="folder-grid" id="monthFolderGrid"></div>
+  </div>
+
+  <!-- LEVEL 3: Grade folders inside a month -->
+  <div id="gradeView" style="display:none;">
+    <div class="section-header">
+      <div>
+        <div class="breadcrumb">
+          <a onclick="backToYears()">📅 Payment Records</a>
+          <span class="breadcrumb-sep">›</span>
+          <a onclick="backToMonths()" id="breadYearLink"></a>
+          <span class="breadcrumb-sep">›</span>
+          <span id="breadMonthLabel" style="color:var(--slate-800);font-weight:700;"></span>
+        </div>
+        <div class="section-title" id="gradeViewTitle"></div>
+        <div class="section-sub" id="gradeViewSub"></div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-outline btn-sm" onclick="backToMonths()">← Back</button>
+        <button class="btn btn-primary btn-sm" onclick="openAddFolderModal()">📁 Create Grade Folder</button>
+      </div>
+    </div>
+    <div class="folder-grid" id="gradeFolderGrid"></div>
+  </div>
+
+  <!-- LEVEL 4: Student list for a specific grade/month -->
+  <div id="studentView" style="display:none;">
+    <div class="section-header">
+      <div>
+        <div class="breadcrumb">
+          <a onclick="backToYears()">📅 Payment Records</a>
+          <span class="breadcrumb-sep">›</span>
+          <a onclick="backToMonths()" id="breadYear"></a>
+          <span class="breadcrumb-sep">›</span>
+          <a onclick="backToGrades()" id="breadMonth" style="color:var(--slate-800);font-weight:700;"></a>
+          <span class="breadcrumb-sep">›</span>
+          <span id="breadGrade" style="color:var(--slate-800);font-weight:700;"></span>
+        </div>
+        <div class="section-title" id="studentViewTitle"></div>
+        <div class="section-sub" id="studentViewSub"></div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-outline btn-sm" onclick="backToGrades()">← Back</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportMonthCSV()">⬇ CSV</button>
+        <button class="btn btn-primary btn-sm" onclick="openAddStudentModal()">👤 Add Student</button>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="text" id="studentSearch" placeholder="Search student name…" oninput="filterStudents()">
+      </div>
+      <select class="filter-select" id="statusFilter" onchange="filterStudents()">
+        <option value="all">All Status</option>
+        <option value="paid">Paid</option>
+        <option value="unpaid">Unpaid</option>
+        <option value="overdue">Overdue</option>
+      </select>
+      <select class="filter-select" id="genderFilter" onchange="filterStudents()">
+        <option value="all">All Genders</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student</th>
+            <th>Grade</th>
+            <th>Gender</th>
+            <th>Parent Contact</th>
+            <th>Pay Date</th>
+            <th>Deadline</th>
+            <th>Status for Month</th>
+            <th>✓ Paid</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="studentTableBody"></tbody>
+      </table>
+      <div id="emptyStudents" class="empty-state" style="display:none;">
+        <div class="empty-icon">👩‍🎓</div>
+        <div class="empty-text">No students in this class yet</div>
+        <div class="empty-sub" style="margin-bottom:18px;">Add the first student to get started</div>
+        <button class="btn btn-primary" onclick="openAddStudentModal()">👤 Add Student</button>
+      </div>
+    </div>
+
+    <!-- Quick-add bar below the table -->
+    <div style="margin-top:14px;display:flex;align-items:center;justify-content:center;">
+      <button class="btn btn-outline" onclick="openAddStudentModal()"
+        style="width:100%;max-width:360px;border-style:dashed;color:var(--blue-core);gap:8px;justify-content:center;padding:12px;">
+        👤 ＋ Add Student to this class
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── REPORTS PAGE ── -->
+<div class="page" id="page-reports">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Payment Reports</div>
+      <div class="section-sub">Analytics & insights</div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-outline" onclick="exportCSV()">⬇ Export All CSV</button>
+      <button class="btn btn-primary" onclick="exportMonthlyReport()">📅 Download Monthly Report</button>
+    </div>
+  </div>
+
+  <div class="report-grid">
+    <div class="report-card">
+      <div class="report-icon">💰</div>
+      <div class="report-val" id="r-total">0</div>
+      <div class="report-lbl">Total Students</div>
+    </div>
+    <div class="report-card">
+      <div class="report-icon">✅</div>
+      <div class="report-val" id="r-paid" style="color:var(--green)">0</div>
+      <div class="report-lbl">Payments Confirmed</div>
+    </div>
+    <div class="report-card">
+      <div class="report-icon">❗</div>
+      <div class="report-val" id="r-unpaid" style="color:var(--red)">0</div>
+      <div class="report-lbl">Pending Payments</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-header">
+      <div class="card-title">📊 Payment Rate by Grade</div>
+    </div>
+    <div style="padding:20px 28px 10px;">
+      <div class="bar-chart" id="barChart"></div>
+      <div style="display:flex;gap:18px;justify-content:center;" id="barLabels"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">📋 All Students Summary</div>
+    </div>
+    <div class="card-body">
+      <div style="overflow:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Grade</th>
+              <th>Gender</th>
+              <th>Enroll Date</th>
+              <th>Parent Contact</th>
+              <th>Pay Date</th>
+              <th>Deadline</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="reportTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SETTINGS PAGE ── -->
+<div class="page" id="page-settings">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Settings</div>
+      <div class="section-sub">Manage your preferences</div>
+    </div>
+  </div>
+  <div class="settings-grid">
+    <div class="settings-card">
+      <h3>🔔 Notifications</h3>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Deadline Alerts</div>
+          <div class="toggle-sub">Warn when deadline is within 7 days</div>
+        </div>
+        <button class="toggle on" onclick="this.classList.toggle('on')"></button>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Overdue Reminders</div>
+          <div class="toggle-sub">Alert for overdue payments</div>
+        </div>
+        <button class="toggle on" onclick="this.classList.toggle('on')"></button>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Payment Confirmed</div>
+          <div class="toggle-sub">Notify when student marked paid</div>
+        </div>
+        <button class="toggle" onclick="this.classList.toggle('on')"></button>
+      </div>
+    </div>
+    <div class="settings-card">
+      <h3>🏫 School Info</h3>
+      <div class="form-group">
+        <label class="form-label">School Name</label>
+        <input class="form-input" id="schoolName" value="Bright Future Academy" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Academic Year</label>
+        <input class="form-input" id="academicYear" value="2024–2025" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Default Pay Day of Month <span style="font-size:.7rem;color:var(--slate-400);text-transform:none;letter-spacing:0;">— deadline auto-renews on this day</span></label>
+        <input class="form-input" id="defaultPayDay" type="number" min="1" max="28" value="5" />
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="saveSettings()">Save Changes</button>
+    </div>
+    <div class="settings-card">
+      <h3>🎨 Display</h3>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Show Student ID</div>
+          <div class="toggle-sub">Display ID below student name</div>
+        </div>
+        <button class="toggle on" onclick="this.classList.toggle('on')"></button>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Show Parent Contact</div>
+          <div class="toggle-sub">Show contact number in table</div>
+        </div>
+        <button class="toggle on" onclick="this.classList.toggle('on')"></button>
+      </div>
+    </div>
+    <div class="settings-card">
+      <h3>🗑️ Data Management</h3>
+      <p style="font-size:.82rem;color:var(--slate-400);margin-bottom:16px;">Manage your student data safely with automatic encryption.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="btn btn-outline" onclick="exportCSV()">⬇ Export All Data (CSV)</button>
+        <button class="btn btn-primary btn-sm" onclick="exportSecureBackup()">🔐 Secure Backup (Encrypted)</button>
+        <button class="btn btn-primary btn-sm" onclick="importSecureBackup()">📥 Restore Backup</button>
+        <button class="btn btn-danger" onclick="confirmReset()">♻️ Reset All Data</button>
+      </div>
+    </div>
+    <div class="settings-card">
+      <h3>🔒 Data Security</h3>
+      <div style="display:flex;flex-direction:column;gap:12px;font-size:.82rem;">
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <span>✅</span>
+          <span><strong>Permanent Storage:</strong> All student data is stored permanently in encrypted form until you manually delete it.</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <span>🔐</span>
+          <span><strong>Encrypted Storage:</strong> Data is encrypted before being saved to prevent unauthorized access.</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <span>✓</span>
+          <span><strong>Integrity Check:</strong> Checksums verify data hasn't been corrupted or tampered with.</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <span>💾</span>
+          <span><strong>Auto Backup:</strong> System creates automatic backup before any reset operation.</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <span>📤</span>
+          <span><strong>Export Backup:</strong> Download encrypted backup file for safe offline storage.</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <span>⏳</span>
+          <span><strong>Data Longevity:</strong> Backups are encrypted and can be stored indefinitely.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ALERTS PAGE ── -->
+<div class="page" id="page-alerts">
+  <div class="section-header">
+    <div>
+      <div class="section-title">⚠️ Payment Alerts</div>
+      <div class="section-sub">Students with upcoming or overdue payments</div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-outline" onclick="showPage('dashboard')">← Back to Dashboard</button>
+    </div>
+  </div>
+  <div id="alertsList"></div>
+</div>
+
+</main>
+</div><!-- end appShell -->
+
+<!-- ── CONFIRM DIALOG MODAL ── -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal" style="max-width:380px;">
+    <div class="modal-header" style="background:linear-gradient(135deg,#1e293b,#334155);">
+      <div class="modal-title">⚠️ Confirm Action</div>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:32px 26px 16px;">
+      <p id="confirmMsg" style="font-size:.95rem;color:var(--slate-700);font-weight:500;line-height:1.6;"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
+      <button class="btn btn-danger" id="confirmOk" style="background:var(--red);color:white;border:none;">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── EDIT STUDENT MODAL ── -->
+<div class="modal-overlay" id="editStudentModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">✏️ Edit Student</div>
+      <button class="modal-close" onclick="closeModal('editStudentModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-section-title">👤 Student Info</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" id="eName" placeholder="Student name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Gender</label>
+          <select class="form-select" id="eGender">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Enroll Date</label>
+          <input class="form-input" id="eEnroll" type="date" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Grade</label>
+          <select class="form-select" id="eGrade"></select>
+        </div>
+      </div>
+      <div class="form-section-title">📞 Parent / Guardian</div>
+      <div class="form-group">
+        <label class="form-label">Parent Contact Number</label>
+        <input class="form-input" id="eParentContact" type="tel" placeholder="e.g. 012 345 678" />
+      </div>
+      <div class="form-section-title">💳 Payment Info</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Next Due Date <span class="form-hint">— auto from enroll day</span></label>
+          <input class="form-input" id="eNextDue" readonly
+            style="background:var(--slate-100);color:var(--slate-500);cursor:default;" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Paid Date</label>
+          <input class="form-input" id="ePaidDate" type="date" />
+        </div>
+      </div>
+      <div class="form-group" style="display:flex;align-items:center;gap:12px;margin-top:4px;">
+        <input type="checkbox" id="ePaid" style="width:18px;height:18px;cursor:pointer;" />
+        <label for="ePaid" class="form-label" style="margin:0;cursor:pointer;">Mark as Paid for this month</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('editStudentModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditStudent()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── EDIT GRADE MODAL ── -->
+<div class="modal-overlay" id="editFolderModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">✏️ Edit Grade</div>
+      <button class="modal-close" onclick="closeModal('editFolderModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Grade Name</label>
+        <input class="form-input" id="editFolderNameInput" placeholder="e.g. Grade 6, Grade 7…" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Emoji Icon</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="edit-folder-emoji-opt" data-emoji="📁" onclick="selectEditEmoji(this,'📁')" style="cursor:pointer;font-size:1.6rem;padding:4px 8px;border-radius:8px;border:2px solid var(--blue-core);">📁</span>
+          <span class="edit-folder-emoji-opt" data-emoji="📚" onclick="selectEditEmoji(this,'📚')" style="cursor:pointer;font-size:1.6rem;padding:4px 8px;border-radius:8px;border:2px solid var(--slate-200);">📚</span>
+          <span class="edit-folder-emoji-opt" data-emoji="🏫" onclick="selectEditEmoji(this,'🏫')" style="cursor:pointer;font-size:1.6rem;padding:4px 8px;border-radius:8px;border:2px solid var(--slate-200);">🏫</span>
+          <span class="edit-folder-emoji-opt" data-emoji="⭐" onclick="selectEditEmoji(this,'⭐')" style="cursor:pointer;font-size:1.6rem;padding:4px 8px;border-radius:8px;border:2px solid var(--slate-200);">⭐</span>
+          <span class="edit-folder-emoji-opt" data-emoji="🎒" onclick="selectEditEmoji(this,'🎒')" style="cursor:pointer;font-size:1.6rem;padding:4px 8px;border-radius:8px;border:2px solid var(--slate-200);">🎒</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('editFolderModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditFolder()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADD FOLDER MODAL ── -->
+<div class="modal-overlay" id="addFolderModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📁 Add New Grade</div>
+      <button class="modal-close" onclick="closeModal('addFolderModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Grade Name</label>
+        <input class="form-input" id="folderNameInput" placeholder="e.g. Grade 6, Grade 7…" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Emoji Icon</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="folder-emoji-opt" onclick="selectEmoji(this,'📁')" style="cursor:pointer;font-size:1.6rem;padding:4px 8px;border-radius:8px;border:2px solid var(--blue-core);">📁</span>
+          <span class="folder-emoji-opt" onclick="selectEmoji(this,'📚')" style="cursor:pointer;font-size:1.6rem;padding:4px 8px;border-radius:8px;border:2px solid var(--slate-200);">📚</span>
+          <span class="folder-emoji-opt" onclick="selectEmoji(this,'🏫')" style="cursor:pointer;font-size:1.6rem;padding:4px 8px;border-radius:8px;border:2px solid var(--slate-200);">🏫</span>
+          <span class="folder-emoji-opt" onclick="selectEmoji(this,'⭐')" style="cursor:pointer;font-size:1.6rem;padding:4px 8px;border-radius:8px;border:2px solid var(--slate-200);">⭐</span>
+          <span class="folder-emoji-opt" onclick="selectEmoji(this,'🎒')" style="cursor:pointer;font-size:1.6rem;padding:4px 8px;border-radius:8px;border:2px solid var(--slate-200);">🎒</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('addFolderModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addFolder()">Create Grade</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADD STUDENT MODAL ── -->
+<div class="modal-overlay" id="addStudentModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">👤 Add New Student</div>
+      <button class="modal-close" onclick="closeModal('addStudentModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Basic Info -->
+      <div class="form-section-title">👤 Student Info</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" id="sName" placeholder="Student name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Gender</label>
+          <select class="form-select" id="sGender">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Enroll Date <span class="form-hint">— first day of study</span></label>
+          <input class="form-input" id="sEnroll" type="date" oninput="previewNextDue()" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Grade</label>
+          <select class="form-select" id="sGrade"></select>
+        </div>
+      </div>
+
+      <!-- Parent Info -->
+      <div class="form-section-title">📞 Parent / Guardian</div>
+      <div class="form-group">
+        <label class="form-label">Parent Contact Number</label>
+        <input class="form-input" id="sParentContact" type="tel" placeholder="e.g. 012 345 678" />
+      </div>
+
+      <!-- Payment Schedule — auto from enroll date -->
+      <div class="form-section-title">💳 Payment Schedule</div>
+      <div class="renew-info-box" style="flex-direction:column;gap:6px;">
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <span>✅</span>
+          <span>Enrollment month is <strong>counted as paid</strong>. The first payment deadline is automatically set to <strong>one month after the enroll date</strong>.</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:4px;">
+          <span>📅</span>
+          <span>First due date: <strong id="nextDuePreview" style="color:var(--blue-core);">—</strong></span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;margin-top:2px;">
+          <span>↻</span>
+          <span>Then renews on the same day every month automatically.</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('addStudentModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addStudent()">Add Student</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST CONTAINER ── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  AUTH  — Remember Me (30-day session via localStorage)
+// ══════════════════════════════════════════════════════
+var CREDENTIALS  = { email: 'Ck@school.edu', password: 'admin@168' };
+var SESSION_KEY  = 'ck_takhmao_school_session';
+var SESSION_DAYS = 30;
+var DATA_KEY = 'ck_takhmao_school_data_v2';
+var BACKUP_KEY = 'ck_takhmao_school_backup';
+var DATA_CHECKSUM_KEY = 'ck_takhmao_school_checksum';
+
+/* ── Simple encryption/obfuscation using base64 + XOR (not crypto-grade, for obfuscation only) ── */
+/* FIX: wrap with encodeURIComponent so btoa never fails on emoji/unicode chars like 📁 📚 ⭐ */
+var _encryptor = (function() {
+  const salt = 'ck_takhmao_2024_secure_storage';
+  function simpleXOR(str, key) {
+    return str.split('').map((c, i) =>
+      String.fromCharCode(c.charCodeAt(0) ^ key[(i % key.length)].charCodeAt(0))
+    ).join('');
+  }
+  return {
+    encrypt: function(data) {
+      try {
+        // encodeURIComponent converts all Unicode/emoji to safe ASCII escape sequences
+        // so btoa() never throws on multi-byte characters like 📁 📚 🏫 ⭐ 🎒
+        const json  = encodeURIComponent(JSON.stringify(data));
+        const xored = simpleXOR(json, salt);
+        return btoa(xored);
+      } catch(e) { return null; }
+    },
+    decrypt: function(encrypted) {
+      try {
+        const xored = atob(encrypted);
+        const json  = simpleXOR(xored, salt);
+        // decodeURIComponent reverses the encoding applied in encrypt()
+        return JSON.parse(decodeURIComponent(json));
+      } catch(e) {
+        // Fallback: try legacy format (data saved before this fix, without encodeURIComponent)
+        try {
+          const xored = atob(encrypted);
+          const json  = simpleXOR(xored, salt);
+          return JSON.parse(json);
+        } catch(e2) { return null; }
+      }
+    }
+  };
+})();
+
+/* ── Simple checksum (CRC32-like) for data integrity ── */
+var _checksumUtil = (function() {
+  function crc32(str) {
+    let crc = 0 ^ (-1);
+    for (let i = 0; i < str.length; i++) {
+      crc = (crc >>> 8) ^ ((crc ^ str.charCodeAt(i)) & 0xFF);
+    }
+    return ((crc ^ (-1)) >>> 0).toString(16);
+  }
+  return {
+    generate: function(data) {
+      return crc32(JSON.stringify(data));
+    },
+    verify: function(data, checksum) {
+      return this.generate(data) === checksum;
+    }
+  };
+})();
+
+/* ── Safe localStorage wrapper (sandboxed iframes may block it) ── */
+var _store = (function() {
+  try {
+    localStorage.setItem('__test__', '1');
+    localStorage.removeItem('__test__');
+    return localStorage;
+  } catch(e) {
+    // Fallback: in-memory store (session only, no persistent data)
+    var _mem = {};
+    return {
+      getItem:    function(k) { return _mem[k] !== undefined ? _mem[k] : null; },
+      setItem:    function(k, v) { _mem[k] = v; },
+      removeItem: function(k) { delete _mem[k]; }
+    };
+  }
+})();
+
+function saveSession() {
+  try {
+    _store.setItem(SESSION_KEY, JSON.stringify({ loginAt: Date.now(), email: CREDENTIALS.email }));
+  } catch(e) { /* ignore */ }
+}
+function clearSession() {
+  try { _store.removeItem(SESSION_KEY); } catch(e) { /* ignore */ }
+}
+function getSession() {
+  try {
+    var raw = _store.getItem(SESSION_KEY);
+    if (!raw) return null;
+    var s    = JSON.parse(raw);
+    var ageMs = Date.now() - (s.loginAt || 0);
+    var maxMs = SESSION_DAYS * 24 * 3600 * 1000;
+    if (ageMs > maxMs) { clearSession(); return null; }
+    return s;
+  } catch(e) { clearSession(); return null; }
+}
+function sessionDaysLeft(session) {
+  var ageMs = Date.now() - session.loginAt;
+  var maxMs = SESSION_DAYS * 24 * 3600 * 1000;
+  return Math.ceil((maxMs - ageMs) / (24 * 3600 * 1000));
+}
+
+/* ── show / hide password ── */
+function togglePwVisibility() {
+  var inp = document.getElementById('loginPassword');
+  var btn = document.getElementById('togglePwBtn');
+  if (inp.type === 'password') { inp.type = 'text';     btn.textContent = '🙈'; }
+  else                         { inp.type = 'password'; btn.textContent = '👁';  }
+}
+
+/* ── enter the app ── */
+function enterApp() {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('appShell').classList.remove('hidden');
+  document.getElementById('loginError').style.display = 'none';
+  init();
+}
+
+/* ── login button ── */
+function doLogin() {
+  var email = document.getElementById('loginEmail').value.trim();
+  var pw    = document.getElementById('loginPassword').value;
+  var err   = document.getElementById('loginError');
+  if (email === CREDENTIALS.email && pw === CREDENTIALS.password) {
+    if (document.getElementById('rememberMe').checked) saveSession();
+    else clearSession();
+    enterApp();
+  } else {
+    err.style.display = 'block';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginPassword').focus();
+  }
+}
+
+/* ── logout button ── */
+async function doLogout() {
+  if (!await confirmDialog('Sign out of CK Takhmao School?')) return;
+  clearSession();
+  document.getElementById('appShell').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('loginEmail').value    = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('rememberMe').checked  = false;
+}
+
+/* ── auto-login check — runs after DOM is ready (placed at bottom of script) ── */
+function checkAutoLogin() {
+  var session = getSession();
+  if (!session) return;
+  var daysLeft = sessionDaysLeft(session);
+  document.getElementById('loginEmail').value = session.email;
+  var infoText = document.getElementById('sessionInfoText');
+  if (infoText) {
+    infoText.textContent = 'Session active \u00b7 ' + daysLeft + ' day' + (daysLeft !== 1 ? 's' : '') + ' remaining before re-login required.';
+    document.getElementById('sessionInfoBox').style.display = 'flex';
+  }
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('appShell').classList.remove('hidden');
+}
+
+// ══════════════════════════════════════════════════════
+//  CUSTOM CONFIRM DIALOG  (works in sandboxed iframes)
+// ══════════════════════════════════════════════════════
+function confirmDialog(msg) {
+  return new Promise(resolve => {
+    document.getElementById('confirmMsg').textContent = msg;
+    document.getElementById('confirmModal').classList.add('open');
+    const ok  = document.getElementById('confirmOk');
+    const no  = document.getElementById('confirmCancel');
+    function cleanup(result) {
+      document.getElementById('confirmModal').classList.remove('open');
+      ok.removeEventListener('click', onOk);
+      no.removeEventListener('click', onNo);
+      resolve(result);
+    }
+    function onOk()  { cleanup(true);  }
+    function onNo()  { cleanup(false); }
+    ok.addEventListener('click', onOk);
+    no.addEventListener('click', onNo);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  PERSISTENT STORAGE  — save/load all app data (PERMANENT until deleted)
+// ══════════════════════════════════════════════════════
+
+function saveData() {
+  try {
+    const dataObj = {
+      version: 2,
+      timestamp: Date.now(),
+      grades, settings, explicitAcademicYears,
+      _uidCounter, _idCounter
+    };
+    
+    // Generate checksum for data integrity
+    const checksum = _checksumUtil.generate(dataObj);
+    
+    // Encrypt the data
+    const encrypted = _encryptor.encrypt(dataObj);
+    if (!encrypted) throw new Error('Encryption failed');
+    
+    // Store encrypted data and checksum
+    _store.setItem(DATA_KEY, encrypted);
+    _store.setItem(DATA_CHECKSUM_KEY, checksum);
+  } catch(e) {
+    console.error('Save data error:', e);
+  }
+}
+
+function loadData() {
+  try {
+    const encrypted = _store.getItem(DATA_KEY);
+    if (!encrypted) return false;
+    
+    // Decrypt the data
+    const dataObj = _encryptor.decrypt(encrypted);
+    if (!dataObj) return false;
+    
+    // Verify data integrity
+    const storedChecksum = _store.getItem(DATA_CHECKSUM_KEY);
+    if (storedChecksum && !_checksumUtil.verify(dataObj, storedChecksum)) {
+      console.warn('Data integrity check failed. Data may be corrupted.');
+      return false;
+    }
+    
+    // Migrate data from old versions if needed
+    if (dataObj.version === 1 || !dataObj.version) {
+      // Migrate v1 → v2
+      dataObj.version = 2;
+    }
+    
+    if (dataObj.grades) {
+      grades = dataObj.grades;
+      // ── Migrate old paid/paidDate → payments map ──
+      grades.forEach(g => g.students.forEach(s => {
+        if (!s.payments) s.payments = {};
+        // If old-style paid+paidDate exists, migrate it
+        if (s.paid && s.paidDate && typeof s.paidDate === 'string') {
+          const pd = s.paidDate.slice(0, 7); // "YYYY-MM"
+          if (!s.payments[pd]) s.payments[pd] = s.paidDate;
+        }
+        // Enroll month is always paid
+        if (s.enroll) {
+          const em = s.enroll.slice(0, 7);
+          if (!s.payments[em]) s.payments[em] = s.enroll;
+        }
+        // Remove legacy fields
+        delete s.paid;
+        delete s.paidDate;
+      }));
+    }
+    if (dataObj.settings)              settings             = Object.assign(settings, dataObj.settings);
+    if (dataObj.explicitAcademicYears) explicitAcademicYears = dataObj.explicitAcademicYears;
+    if (dataObj._uidCounter)           _uidCounter          = dataObj._uidCounter;
+    if (dataObj._idCounter)            _idCounter           = dataObj._idCounter;
+    return true;
+  } catch(e) {
+    console.error('Load data error:', e);
+    return false;
+  }
+}
+
+function createDataBackup() {
+  try {
+    const backupData = {
+      timestamp: Date.now(),
+      backup: { grades, settings, explicitAcademicYears, _uidCounter, _idCounter },
+      checksum: _checksumUtil.generate({ grades, settings, explicitAcademicYears, _uidCounter, _idCounter })
+    };
+    const encrypted = _encryptor.encrypt(backupData);
+    if (!encrypted) throw new Error('Backup encryption failed');
+    _store.setItem(BACKUP_KEY, encrypted);
+    return true;
+  } catch(e) {
+    console.error('Backup error:', e);
+    return false;
+  }
+}
+
+function restoreDataBackup() {
+  try {
+    const encrypted = _store.getItem(BACKUP_KEY);
+    if (!encrypted) return false;
+    const backupData = _encryptor.decrypt(encrypted);
+    if (!backupData) return false;
+    
+    // Verify backup integrity
+    if (!_checksumUtil.verify(backupData.backup, backupData.checksum)) {
+      console.warn('Backup integrity check failed.');
+      return false;
+    }
+    
+    // Restore from backup
+    const b = backupData.backup;
+    grades = b.grades || [];
+    settings = Object.assign(settings, b.settings || {});
+    explicitAcademicYears = b.explicitAcademicYears || [];
+    _uidCounter = b._uidCounter || 0;
+    _idCounter = b._idCounter || 0;
+    saveData();
+    return true;
+  } catch(e) {
+    console.error('Restore error:', e);
+    return false;
+  }
+}
+
+function exportDataAsJSON() {
+  try {
+    const exportData = {
+      exportDate: new Date().toISOString(),
+      data: { grades, settings, explicitAcademicYears, _uidCounter, _idCounter },
+      checksum: _checksumUtil.generate({ grades, settings, explicitAcademicYears, _uidCounter, _idCounter })
+    };
+    const encrypted = _encryptor.encrypt(exportData);
+    if (!encrypted) throw new Error('Export encryption failed');
+    const blob = new Blob([encrypted], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `CK_Takhmao_Backup_${new Date().getTime()}.bak`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    return true;
+  } catch(e) {
+    console.error('Export error:', e);
+    return false;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════════════════
+let settings = { defaultPayDay: 5, schoolName: 'Bright Future Academy', academicYear: '2024–2025' };
+
+function saveSettings() {
+  settings.defaultPayDay = Math.min(28, Math.max(1, parseInt(document.getElementById('defaultPayDay').value) || 5));
+  settings.schoolName    = document.getElementById('schoolName').value.trim() || settings.schoolName;
+  settings.academicYear  = document.getElementById('academicYear').value.trim() || settings.academicYear;
+  document.getElementById('headerYear').textContent = settings.academicYear;
+  saveData();
+  showToast('✅ Settings saved!', 'success');
+}
+
+// ══════════════════════════════════════════════════════
+//  UID COUNTER — every student gets a unique numeric uid
+//  so we never rely on array index or object identity
+// ══════════════════════════════════════════════════════
+let _uidCounter = 1;
+function nextUid() { return _uidCounter++; }
+
+// ══════════════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════════════
+let selectedEmoji      = '📁';
+let currentFolderIndex = null;
+let explicitAcademicYears = [];
+
+let grades = [];
+
+// Safe incrementing ID — never duplicates even after deletes
+// (defined here so loadData can restore it)
+let _idCounter = 13;
+
+// Load persisted data immediately (before any other init)
+loadData();
+
+// ══════════════════════════════════════════════════════
+//  LOOKUP HELPERS — always find by uid, never by index
+// ══════════════════════════════════════════════════════
+function findStudentByUid(uid) {
+  for (let gi = 0; gi < grades.length; gi++) {
+    const si = grades[gi].students.findIndex(s => s.uid === uid);
+    if (si !== -1) return { gi, si, student: grades[gi].students[si] };
+  }
+  return null;
+}
+
+// ══════════════════════════════════════════════════════
+//  GENERAL HELPERS
+// ══════════════════════════════════════════════════════
+function getAllStudents() {
+  return grades.flatMap(g => g.students.map(s => ({ ...s, gradeName: g.name })));
+}
+
+// Parse a YYYY-MM-DD string as LOCAL date (avoids timezone off-by-one)
+function parseLocalDate(dateStr) {
+  if (!dateStr) return null;
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+// Today at midnight local time
+function localToday() {
+  const t = new Date(); t.setHours(0,0,0,0); return t;
+}
+
+// ── Deadline helpers ────────────────────────────────────
+// deadlineDay is the day-of-month from the enroll date (e.g. 1 for 1 Mar 2026).
+// Enroll month is always pre-paid.  First real due = enroll date + 1 month.
+// Every subsequent due = that same day the following month.
+
+// Next deadline date for a student (their next unpaid due date from today).
+// Looks at which months are already paid and returns the next unpaid deadline >= today.
+function computeDeadline(s) {
+  if (!s || !s.deadlineDay) return null;
+  const today = localToday();
+  const enrollDate = s.enroll ? parseLocalDate(s.enroll) : null;
+  if (!enrollDate) return null;
+  const payments = s.payments || {};
+
+  // Start from enroll+1 month (enroll month is always paid)
+  let d = new Date(enrollDate.getFullYear(), enrollDate.getMonth() + 1, s.deadlineDay);
+  // Walk forward until we find a month that is NOT paid and is on/after today
+  for (let i = 0; i < 120; i++) {
+    const ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    if (!payments[ym] && d >= today) return d.toISOString().split('T')[0];
+    d = new Date(d.getFullYear(), d.getMonth() + 1, s.deadlineDay);
+  }
+  return null;
+}
+
+// Current (or soonest upcoming) unpaid deadline — used for dashboard overdue checks.
+function getCurrentDeadline(s) {
+  return computeDeadline(s);
+}
+
+function getDeadline(s) { return computeDeadline(s); }
+
+// Days until a date string (negative = overdue)
+function daysUntil(dateStr) {
+  if (!dateStr) return 999;
+  const today = localToday();
+  const d = parseLocalDate(dateStr);
+  if (!d) return 999;
+  return Math.ceil((d - today) / 86400000);
+}
+
+// Is a student paid for the CURRENT month?
+function isPaidThisMonth(s) {
+  const today  = localToday();
+  const curKey = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;
+  return !!(s.payments && s.payments[curKey]);
+}
+
+// Format YYYY-MM-DD → "01 Sep 2024" without timezone shift
+function fmtDate(dateStr) {
+  if (!dateStr) return '—';
+  const d = parseLocalDate(dateStr);
+  if (!d) return '—';
+  return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+}
+
+// Returns an array of month labels the student owes for (most recent first).
+// For paid students → returns the month they paid.
+// For unpaid students → returns every month from enroll up to today where deadline has passed or is current.
+function getMonthsOwed(s) {
+  const today = localToday();
+  const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  if (s.paid && s.paidDate) {
+    const pd = parseLocalDate(s.paidDate);
+    if (!pd) return [];
+    return [{ label: MONTH_NAMES[pd.getMonth()] + ' ' + pd.getFullYear(), type: 'paid' }];
+  }
+
+  // Unpaid: collect overdue/current months from enrollment (cap 12 months back)
+  const enrollDate = s.enroll ? parseLocalDate(s.enroll) : null;
+  let fromYear  = enrollDate ? enrollDate.getFullYear() : today.getFullYear();
+  let fromMonth = enrollDate ? enrollDate.getMonth()    : today.getMonth();
+
+  // Cap lookback at 12 months
+  const capDate = new Date(today.getFullYear(), today.getMonth() - 11, 1);
+  if (new Date(fromYear, fromMonth, 1) < capDate) {
+    fromYear  = capDate.getFullYear();
+    fromMonth = capDate.getMonth();
+  }
+
+  const months = [];
+  let y = fromYear, m = fromMonth;
+  while (y < today.getFullYear() || (y === today.getFullYear() && m <= today.getMonth())) {
+    const deadline  = new Date(y, m, s.deadlineDay || 5);
+    const isCurrent = (y === today.getFullYear() && m === today.getMonth());
+    const isPast    = deadline < today;
+    if (isPast || isCurrent) {
+      months.push({ label: MONTH_NAMES[m] + ' ' + y, type: isCurrent ? (isPast ? 'overdue' : 'current') : 'overdue' });
+    }
+    m++; if (m > 11) { m = 0; y++; }
+  }
+  return months.reverse(); // most recent first
+}
+
+function initials(name) {
+  return name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+}
+
+const COLORS = ['#2563EB','#7C3AED','#059669','#DC2626','#D97706','#0891B2','#BE185D','#15803D'];
+function avatarColor(name) {
+  let h = 0; for (const c of name) h += c.charCodeAt(0);
+  return COLORS[h % COLORS.length];
+}
+
+function genId() {
+  return 'S' + String(_idCounter++).padStart(3,'0');
+}
+
+function todayISO() { return new Date().toISOString().split('T')[0]; }
+
+function nowMonthLabel() {
+  return new Date().toLocaleDateString('en-GB', { month:'long', year:'numeric' });
+}
+
+// ══════════════════════════════════════════════════════
+//  PAGE SWITCHER
+// ══════════════════════════════════════════════════════
+function showPage(page, tab) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  if (tab) tab.classList.add('active');
+  if (page === 'dashboard') updateDashboard();
+  if (page === 'reports')   updateReports();
+  if (page === 'alerts')    updateAlerts();
+}
+
+// ══════════════════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════════════════
+function updateDashboard() {
+  const all      = getAllStudents();
+  const today    = localToday();
+  const curKey   = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;
+
+  // "Paid this month" = has a payment entry for the current YYYY-MM
+  const paidThisMonth = all.filter(s => s.payments && s.payments[curKey]);
+  const overdue  = all.filter(s => !(s.payments && s.payments[curKey]) && daysUntil(getCurrentDeadline(s)) < 0);
+  const dueSoon  = all.filter(s => !(s.payments && s.payments[curKey]) && daysUntil(getCurrentDeadline(s)) >= 0 && daysUntil(getCurrentDeadline(s)) <= 7);
+  const alerts   = overdue.length + dueSoon.length;
+
+  document.getElementById('stat-total').textContent  = all.length;
+  document.getElementById('stat-paid').textContent   = paidThisMonth.length;
+  document.getElementById('stat-unpaid').textContent = all.length - paidThisMonth.length;
+  document.getElementById('stat-alert').textContent  = alerts;
+
+  const pct = all.length ? Math.round(paidThisMonth.length / all.length * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('pct-label').textContent = pct + '%';
+  document.getElementById('progress-paid-lbl').textContent = paidThisMonth.length + ' paid';
+  document.getElementById('progress-total-lbl').textContent = 'of ' + all.length + ' students';
+
+  let alertMsg = '';
+  if (overdue.length && dueSoon.length)
+    alertMsg = `${overdue.length} student(s) are overdue and ${dueSoon.length} more are due within 7 days.`;
+  else if (overdue.length)
+    alertMsg = `${overdue.length} student(s) have overdue payments. Please follow up immediately.`;
+  else if (dueSoon.length)
+    alertMsg = `${dueSoon.length} student(s) have payment deadlines within the next 7 days.`;
+  else
+    alertMsg = 'No urgent payment deadlines. All students are on track!';
+  document.getElementById('alertBannerText').textContent = alertMsg;
+
+  // Due soon list — show overdue first (most urgent), then upcoming
+  const dlEl = document.getElementById('deadlineList');
+  const urgentList = [
+    ...overdue.sort((a,b) => daysUntil(getCurrentDeadline(a)) - daysUntil(getCurrentDeadline(b))),
+    ...dueSoon.sort((a,b) => daysUntil(getCurrentDeadline(a)) - daysUntil(getCurrentDeadline(b)))
+  ].slice(0, 6);
+
+  dlEl.innerHTML = urgentList.length === 0
+    ? `<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">No upcoming deadlines</div></div>`
+    : urgentList.map(s => {
+        const dl = getCurrentDeadline(s), days = daysUntil(dl), col = avatarColor(s.name);
+        const cls  = days < 0 ? 'days-urgent' : days <= 3 ? 'days-urgent' : days <= 7 ? 'days-soon' : 'days-ok';
+        const lbl  = days < 0 ? `${Math.abs(days)}d overdue` : days === 0 ? 'Due today!' : `${days}d left`;
+        return `<div class="deadline-item">
+          <div class="deadline-avatar" style="background:${col}20;color:${col}">${initials(s.name)}</div>
+          <div class="deadline-info">
+            <div class="deadline-name">${s.name}</div>
+            <div class="deadline-grade">${s.gradeName} · Due ${fmtDate(dl)}</div>
+          </div>
+          <span class="deadline-days ${cls}">${lbl}</span>
+        </div>`;
+      }).join('');
+
+  // Recently paid — look through all payments across all students, pick most recent entries
+  const rpEl = document.getElementById('recentPaidList');
+  const recentPayments = [];
+  all.forEach(s => {
+    Object.entries(s.payments || {}).forEach(([ym, dateStr]) => {
+      recentPayments.push({ ...s, _ym: ym, _paidOn: dateStr });
+    });
+  });
+  recentPayments.sort((a, b) => (b._paidOn||'').localeCompare(a._paidOn||''));
+  const top5 = recentPayments.slice(0, 5);
+  rpEl.innerHTML = top5.length === 0
+    ? `<div class="empty-state"><div class="empty-icon">💳</div><div class="empty-text">No payments yet</div></div>`
+    : top5.map(s => {
+        const col = avatarColor(s.name);
+        const [yr, mo] = s._ym.split('-');
+        const monthLabel = MONTH_NAMES_FULL[parseInt(mo)-1] + ' ' + yr;
+        return `<div class="deadline-item">
+          <div class="deadline-avatar" style="background:${col}20;color:${col}">${initials(s.name)}</div>
+          <div class="deadline-info">
+            <div class="deadline-name">${s.name}</div>
+            <div class="deadline-grade">${s.gradeName} · ${monthLabel} · Paid ${fmtDate(s._paidOn)}</div>
+          </div>
+          <span class="deadline-days days-ok">✓ Paid</span>
+        </div>`;
+      }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  YEAR → MONTH → STUDENT  NAVIGATION
+// ══════════════════════════════════════════════════════
+const MONTH_NAMES_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTH_NAMES_SHORT= ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// Academic year string like "2024-2025" → {start: 2024, end: 2025}
+// We store current browsing state here
+let _browseYear  = null;  // e.g. "2024-2025"
+let _browseMonth = null;  // 0-11
+let _browseGrade = null;  // grade index
+
+// Build list of academic years that have any student activity
+function getAcademicYears() {
+  const all = getAllStudents();
+  const today = localToday();
+  const yearSet = new Set();
+
+  // Always include the current academic year
+  const cy = today.getMonth() >= 8 ? today.getFullYear() : today.getFullYear() - 1;
+  yearSet.add(`${cy}-${cy+1}`);
+
+  // Add years from enroll dates and paid dates
+  all.forEach(s => {
+    const addFromDate = (dateStr) => {
+      const d = parseLocalDate(dateStr);
+      if (!d) return;
+      const y = d.getMonth() >= 8 ? d.getFullYear() : d.getFullYear() - 1;
+      yearSet.add(`${y}-${y+1}`);
+    };
+    addFromDate(s.enroll);
+    if (s.paidDate) addFromDate(s.paidDate);
+  });
+
+  explicitAcademicYears.forEach(y => yearSet.add(y));
+  return [...yearSet].sort().reverse(); // newest first
+}
+
+// Parse "2024-2025" → {start:2024, end:2025}
+function parseAcYear(ayStr) {
+  const [s, e] = ayStr.split('-').map(Number);
+  return { start: s, end: e };
+}
+
+// Academic year spans Sep(start) to Aug(end).  Given ayStr and monthIdx(0-11),
+// return the calendar year for that month.
+function calYearForMonth(ayStr, monthIdx) {
+  const { start, end } = parseAcYear(ayStr);
+  return monthIdx >= 8 ? start : end;
+}
+
+// Months in order for an academic year: Sep=8 … Aug=7 of next year
+const AY_MONTH_ORDER = [8,9,10,11,0,1,2,3,4,5,6,7];
+
+// For a given academic year and month, get all students who are relevant:
+// enrolled on or before that month, and either:
+//   - paid: paidDate is in that calendar month
+//   - unpaid/overdue: their deadline for that month has passed or is this month
+function getStudentsForMonth(ayStr, monthIdx) {
+  const all = getAllStudents();
+  const calYear = calYearForMonth(ayStr, monthIdx);
+  const today = localToday();
+  const monthStart = new Date(calYear, monthIdx, 1);
+  const monthEnd   = new Date(calYear, monthIdx + 1, 0); // last day
+
+  return all.filter(s => {
+    // Must be enrolled before or during this month
+    const enrollDate = s.enroll ? parseLocalDate(s.enroll) : null;
+    if (!enrollDate || enrollDate > monthEnd) return false;
+    return true;
+  }).map(s => {
+    const deadline = new Date(calYear, monthIdx, s.deadlineDay || 5);
+    const yearMonth = `${calYear}-${String(monthIdx + 1).padStart(2, '0')}`; // "YYYY-MM"
+
+    // Is paid for THIS specific month? Check payments map.
+    const payments = s.payments || {};
+    const paidForMonth = !!payments[yearMonth];
+    const paidDateForMonth = payments[yearMonth] || null;
+
+    const isCurrentMonth = (today.getFullYear() === calYear && today.getMonth() === monthIdx);
+    const isFutureMonth  = new Date(calYear, monthIdx, 1) > today;
+    const daysLeft = Math.ceil((deadline - today) / 86400000);
+
+    let monthStatus;
+    if (paidForMonth)       monthStatus = 'paid';
+    else if (isFutureMonth) monthStatus = 'future';
+    else if (isCurrentMonth) monthStatus = daysLeft < 0 ? 'overdue' : 'pending';
+    else monthStatus = 'overdue'; // past month, not paid
+
+    return { ...s, monthStatus, deadline: deadline.toISOString().split('T')[0], daysLeft, paidForMonth, paidDateForMonth, yearMonth, calYear };
+  });
+}
+
+// ── Level 1: render year folders ──
+function renderYearFolders() {
+  const years = getAcademicYears();
+  const all   = getAllStudents();
+  const today = localToday();
+
+  document.getElementById('yearFolderGrid').innerHTML = years.map(ay => {
+    const { start, end } = parseAcYear(ay);
+    // Count students active in this year and their overall paid status
+    const students = all.filter(s => {
+      const d = s.enroll ? parseLocalDate(s.enroll) : null;
+      if (!d) return false;
+      const enrollAy = d.getMonth() >= 8 ? d.getFullYear() : d.getFullYear() - 1;
+      return enrollAy <= start && (!s.paidDate || true); // enrolled by start of year
+    });
+    const paidCount = students.filter(s => s.paid).length;
+    const pct = students.length ? Math.round(paidCount / students.length * 100) : 0;
+    const isCurrent = (() => {
+      const cy = today.getMonth() >= 8 ? today.getFullYear() : today.getFullYear() - 1;
+      return cy === start;
+    })();
+    const canDelete = students.length === 0 && explicitAcademicYears.includes(ay);
+    return `<div class="folder-card" onclick="openYear('${ay}')">
+      <span class="folder-icon">${isCurrent ? '📅' : '🗂'}</span>
+      <div class="folder-name">${ay}</div>
+      <div class="folder-count">${students.length} student${students.length!==1?'s':''} · ${pct}% paid</div>
+      ${isCurrent ? '<div style="font-size:.65rem;color:var(--blue-core);font-weight:700;margin-top:4px;">● Current Year</div>' : ''}
+      <div class="folder-paid-bar"><div class="folder-paid-fill" style="width:${pct}%"></div></div>
+      ${canDelete ? '<button type="button" class="btn btn-danger btn-sm" onclick="deleteYearFolder(\''+ay+'\'); event.stopPropagation();" style="position:absolute;top:12px;right:12px;">🗑</button>' : ''}
+    </div>`;
+  }).join('');
+}
+
+function openYear(ayStr) {
+  _browseYear  = ayStr;
+  _browseMonth = null;
+  _browseGrade = null;
+  document.getElementById('yearView').style.display  = 'none';
+  document.getElementById('monthView').style.display = '';
+  document.getElementById('gradeView').style.display = 'none';
+  document.getElementById('studentView').style.display = 'none';
+  document.getElementById('currentYearLabel').textContent = ayStr;
+  document.getElementById('monthViewTitle').textContent   = `Academic Year ${ayStr}`;
+  renderMonthFolders(ayStr);
+}
+
+// ── Level 2: render month folders for a year ──
+function renderMonthFolders(ayStr) {
+  const today = localToday();
+  const { start, end } = parseAcYear(ayStr);
+  let totalPaid = 0, totalStudents = 0;
+
+  const html = AY_MONTH_ORDER.map(mi => {
+    const calYear = mi >= 8 ? start : end;
+    const monthStart = new Date(calYear, mi, 1);
+    const students   = getStudentsForMonth(ayStr, mi);
+    const paidCount  = students.filter(s => s.paidForMonth).length;
+    const overdueCount = students.filter(s => s.monthStatus === 'overdue').length;
+    const isCurrent  = (today.getFullYear() === calYear && today.getMonth() === mi);
+    const isFuture   = monthStart > today;
+    const pct = students.length ? Math.round(paidCount / students.length * 100) : 0;
+    totalPaid += paidCount; totalStudents += students.length;
+
+    let icon = isFuture ? '🔒' : isCurrent ? '📆' : pct === 100 ? '✅' : overdueCount ? '❗' : '📋';
+    let extraLabel = isFuture
+      ? '<div style="font-size:.65rem;color:var(--slate-400);margin-top:4px;">Upcoming</div>'
+      : isCurrent
+        ? '<div style="font-size:.65rem;color:var(--blue-core);font-weight:700;margin-top:4px;">● Current</div>'
+        : overdueCount
+          ? `<div style="font-size:.65rem;color:var(--red);font-weight:700;margin-top:4px;">${overdueCount} overdue</div>`
+          : '';
+
+    return `<div class="folder-card${isFuture?' future-month':''}" onclick="${isFuture?'':'openMonth(\''+ayStr+'\','+mi+')'}">
+      <span class="folder-icon">${icon}</span>
+      <div class="folder-name">${MONTH_NAMES_SHORT[mi]}</div>
+      <div class="folder-count">${MONTH_NAMES_FULL[mi]} ${calYear}</div>
+      <div class="folder-count" style="margin-top:2px;">${students.length} student${students.length!==1?'s':''} · ${paidCount} paid</div>
+      ${extraLabel}
+      <div class="folder-paid-bar"><div class="folder-paid-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('monthFolderGrid').innerHTML = html;
+  const overallPct = totalStudents ? Math.round(totalPaid / totalStudents * 100) : 0;
+  document.getElementById('monthViewSub').textContent =
+    `${totalStudents} total students · ${totalPaid} payments collected · ${overallPct}% overall paid rate`;
+}
+
+function backToYears() {
+  _browseYear = null; _browseMonth = null;
+  document.getElementById('yearView').style.display  = '';
+  document.getElementById('monthView').style.display = 'none';
+  document.getElementById('gradeView').style.display = 'none';
+  document.getElementById('studentView').style.display = 'none';
+  renderYearFolders();
+}
+
+function openMonth(ayStr, monthIdx) {
+  _browseYear  = ayStr;
+  _browseMonth = monthIdx;
+  _browseGrade = null;
+  const { start, end } = parseAcYear(ayStr);
+  const calYear = monthIdx >= 8 ? start : end;
+
+  document.getElementById('yearView').style.display  = 'none';
+  document.getElementById('monthView').style.display = 'none';
+  document.getElementById('gradeView').style.display = '';
+  document.getElementById('studentView').style.display = 'none';
+  document.getElementById('breadYearLink').textContent = ayStr;
+  document.getElementById('breadMonthLabel').textContent = `${MONTH_NAMES_FULL[monthIdx]} ${calYear}`;
+  document.getElementById('gradeViewTitle').textContent = `${MONTH_NAMES_FULL[monthIdx]} ${calYear}`;
+  document.getElementById('gradeViewSub').textContent = `Select a grade to view students for ${MONTH_NAMES_FULL[monthIdx]} ${calYear}`;
+  renderGradeFolders(ayStr, monthIdx);
+}
+
+function openGrade(gradeIdx) {
+  _browseGrade = gradeIdx;
+  const grade = grades[gradeIdx];
+  const { start, end } = parseAcYear(_browseYear);
+  const calYear = _browseMonth >= 8 ? start : end;
+
+  document.getElementById('monthView').style.display = 'none';
+  document.getElementById('gradeView').style.display = 'none';
+  document.getElementById('studentView').style.display = '';
+  document.getElementById('breadYear').textContent  = _browseYear;
+  document.getElementById('breadMonth').textContent = `${MONTH_NAMES_FULL[_browseMonth]} ${calYear}`;
+  document.getElementById('breadGrade').textContent = grade.name;
+  document.getElementById('breadYear').onclick = () => backToYears();
+  document.getElementById('breadMonth').onclick = () => backToGrades();
+  document.getElementById('breadYear').style.cursor = 'pointer';
+  document.getElementById('breadMonth').style.cursor = 'pointer';
+  document.getElementById('breadGrade').style.cursor = 'default';
+  document.getElementById('studentViewTitle').textContent = `${grade.name} — ${MONTH_NAMES_FULL[_browseMonth]} ${calYear}`;
+  document.getElementById('studentViewSub').textContent = `Students in ${grade.name} for ${MONTH_NAMES_FULL[_browseMonth]} ${calYear}`;
+  document.getElementById('studentSearch').value  = '';
+  document.getElementById('statusFilter').value   = 'all';
+  document.getElementById('genderFilter').value   = 'all';
+  renderStudentTable();
+}
+
+function backToMonths() {
+  _browseGrade = null;
+  document.getElementById('yearView').style.display  = 'none';
+  document.getElementById('monthView').style.display = '';
+  document.getElementById('gradeView').style.display = 'none';
+  document.getElementById('studentView').style.display = 'none';
+  renderMonthFolders(_browseYear);
+}
+
+function backToGrades() {
+  _browseGrade = null;
+  document.getElementById('yearView').style.display  = 'none';
+  document.getElementById('monthView').style.display = 'none';
+  document.getElementById('gradeView').style.display = '';
+  document.getElementById('studentView').style.display = 'none';
+  renderGradeFolders(_browseYear, _browseMonth);
+}
+
+// Keep renderFolders pointing to year view for any legacy calls
+function renderFolders() { renderYearFolders(); }
+function closeFolderView() { backToYears(); }
+
+// ══════════════════════════════════════════════════════
+//  STUDENT TABLE  — month-aware
+// ══════════════════════════════════════════════════════
+function renderStudentTable() {
+  if (_browseYear === null || _browseMonth === null) return;
+  const search  = (document.getElementById('studentSearch').value || '').toLowerCase();
+  const statusF = document.getElementById('statusFilter').value;
+  const genderF = document.getElementById('genderFilter').value;
+
+  let students = getStudentsForMonth(_browseYear, _browseMonth);
+  if (_browseGrade !== null) {
+    const gradeName = grades[_browseGrade] ? grades[_browseGrade].name : null;
+    students = students.filter(s => s.gradeName === gradeName);
+  }
+
+  // Apply filters
+  students = students.filter(s => {
+    if (!s.name.toLowerCase().includes(search)) return false;
+    if (genderF !== 'all' && s.gender !== genderF) return false;
+    if (statusF === 'paid')    return s.paidForMonth;
+    if (statusF === 'unpaid')  return !s.paidForMonth && s.monthStatus !== 'overdue';
+    if (statusF === 'overdue') return s.monthStatus === 'overdue';
+    return true;
+  });
+
+  // Sort by deadline urgency: overdue first (most overdue → top), then due soon, then pending, then paid
+  students.sort((a, b) => {
+    const urgency = s => {
+      if (s.monthStatus === 'overdue') return 0;       // most urgent
+      if (s.paidForMonth)             return 3;        // least urgent
+      if (s.daysLeft <= 7)            return 1;        // due soon
+      return 2;                                        // pending
+    };
+    const ua = urgency(a), ub = urgency(b);
+    if (ua !== ub) return ua - ub;
+    // Within same group, sort by daysLeft ascending (most urgent first)
+    return (a.daysLeft ?? 9999) - (b.daysLeft ?? 9999);
+  });
+
+  const gradeStudents = _browseGrade !== null
+    ? getStudentsForMonth(_browseYear, _browseMonth).filter(s => s.gradeName === grades[_browseGrade].name)
+    : getStudentsForMonth(_browseYear, _browseMonth);
+  const paidCount    = gradeStudents.filter(s => s.paidForMonth).length;
+  const overdueCount = gradeStudents.filter(s => s.monthStatus === 'overdue').length;
+  const pendingCount = gradeStudents.filter(s => s.monthStatus === 'pending').length;
+  document.getElementById('studentViewSub').textContent =
+    `${gradeStudents.length} students · ${paidCount} paid · ${overdueCount} overdue · ${pendingCount} pending`;
+
+  const tbody = document.getElementById('studentTableBody');
+  const empty = document.getElementById('emptyStudents');
+
+  if (students.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = students.map((s, i) => {
+    const col  = avatarColor(s.name);
+    const uid  = s.uid;
+    const gcls = s.gender === 'Male' ? 'gender-m' : 'gender-f';
+    const gico = s.gender === 'Male' ? '♂' : '♀';
+
+    let statusHtml, deadlineHtml, payDateHtml;
+    const monthIdx = _browseMonth; // current browsing month
+    if (s.paidForMonth) {
+      // Next deadline = deadlineDay of the month after the one we're viewing
+      const nextDl = new Date(s.calYear, monthIdx + 1, s.deadlineDay);
+      const nextDlStr = nextDl.toISOString().split('T')[0];
+      statusHtml   = `<span class="status-badge status-paid">✓ Paid</span>`;
+      payDateHtml  = `<span style="color:var(--green);font-weight:600">${fmtDate(s.paidDateForMonth)}</span>`;
+      deadlineHtml = `<div style="color:var(--slate-400);font-size:.78rem;">${fmtDate(nextDlStr)}<br><span style="font-size:.68rem;color:var(--slate-400);">Next deadline</span></div>`;
+    } else if (s.monthStatus === 'future') {
+      statusHtml   = `<span class="status-badge" style="background:var(--slate-100);color:var(--slate-400);">🔒 Upcoming</span>`;
+      payDateHtml  = `<span style="color:var(--slate-400)">—</span>`;
+      deadlineHtml = `<div style="color:var(--slate-400);font-size:.78rem;">Day ${s.deadlineDay}</div>`;
+    } else if (s.monthStatus === 'overdue') {
+      const daysOver = Math.abs(s.daysLeft);
+      statusHtml   = `<span class="status-badge status-unpaid">❗ Overdue</span>`;
+      payDateHtml  = `<span style="color:var(--slate-400)">—</span>`;
+      deadlineHtml = `<div style="color:var(--red);font-weight:600">
+        <div style="font-size:.78rem;">${fmtDate(s.deadline)}</div>
+        <div style="font-size:.68rem;">${daysOver}d overdue</div>
+      </div>`;
+    } else if (s.daysLeft === 0) {
+      statusHtml   = `<span class="status-badge status-due">🔔 Due Today</span>`;
+      payDateHtml  = `<span style="color:var(--slate-400)">—</span>`;
+      deadlineHtml = `<div style="color:var(--red);font-weight:700;font-size:.78rem;">${fmtDate(s.deadline)}<br><span style="font-size:.68rem;">Due today!</span></div>`;
+    } else if (s.daysLeft <= 7) {
+      statusHtml   = `<span class="status-badge status-due">⚠ Due Soon</span>`;
+      payDateHtml  = `<span style="color:var(--slate-400)">—</span>`;
+      deadlineHtml = `<div style="color:var(--amber);font-weight:600;font-size:.78rem;">${fmtDate(s.deadline)}<br><span style="font-size:.68rem;">${s.daysLeft}d left</span></div>`;
+    } else {
+      statusHtml   = `<span class="status-badge status-unpaid">⏳ Pending</span>`;
+      payDateHtml  = `<span style="color:var(--slate-400)">—</span>`;
+      deadlineHtml = `<div style="font-size:.78rem;">${fmtDate(s.deadline)}<br><span style="font-size:.68rem;color:var(--slate-400);">${s.daysLeft}d left</span></div>`;
+    }
+
+    return `<tr class="${s.paidForMonth ? 'paid-row' : s.monthStatus === 'overdue' ? 'overdue-row' : s.daysLeft <= 7 && !s.paidForMonth ? 'duesoon-row' : ''}">
+      <td class="mono text-muted" style="font-size:.72rem">${String(i+1).padStart(2,'0')}</td>
+      <td>
+        <div class="student-name-cell">
+          <div class="student-avatar" style="background:${col}20;color:${col}">${initials(s.name)}</div>
+          <div><div class="s-name">${s.name}</div><div class="s-id">${s.id}</div></div>
+        </div>
+      </td>
+      <td style="font-size:.78rem;color:var(--slate-600);font-weight:600">${s.gradeName}</td>
+      <td><span class="gender-badge ${gcls}">${gico} ${s.gender}</span></td>
+      <td><div class="contact-cell"><span class="phone-icon">📞</span> ${s.parentContact||'<span style="color:var(--slate-400)">—</span>'}</div></td>
+      <td style="white-space:nowrap">${payDateHtml}</td>
+      <td>${deadlineHtml}</td>
+      <td>${statusHtml}</td>
+      <td><button class="pay-btn ${s.paidForMonth?'paid':''}" onclick="togglePaid(${uid},'${s.yearMonth}')" title="${s.paidForMonth?'Mark Unpaid for this month':'Mark Paid for this month'}">✓</button></td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-ghost btn-sm" onclick="openEditStudentModal(${uid})" title="Edit Student" style="color:var(--blue-core);margin-right:2px;">✏️</button>
+        <button class="btn btn-ghost btn-sm" onclick="deleteStudent(${uid})" title="Remove Student" style="color:var(--red);">🗑</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderGradeFolders(ayStr, monthIdx) {
+  const students = getStudentsForMonth(ayStr, monthIdx);
+  const gradeCards = grades.map((grade, gi) => {
+    const gradeStudents = students.filter(s => s.gradeName === grade.name);
+    const paidCount = gradeStudents.filter(s => s.paidForMonth).length;
+    const pct = gradeStudents.length ? Math.round(paidCount / gradeStudents.length * 100) : 0;
+    return `<div class="folder-card" onclick="openGrade(${gi})" style="padding-top:38px;">
+      <div style="position:absolute;top:8px;right:8px;display:flex;gap:4px;z-index:2;">
+        <button type="button" title="Edit grade" onclick="openEditFolderModal(${gi}); event.stopPropagation();"
+          style="background:var(--blue-faint);border:1px solid var(--blue-soft);color:var(--blue-core);border-radius:6px;width:26px;height:26px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✏️</button>
+        <button type="button" title="Delete grade" onclick="deleteGradeFolder(${gi}); event.stopPropagation();"
+          style="background:var(--red-soft);border:1px solid #FECACA;color:var(--red);border-radius:6px;width:26px;height:26px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🗑</button>
+      </div>
+      <span class="folder-icon">${grade.icon || '📁'}</span>
+      <div class="folder-name">${grade.name}</div>
+      <div class="folder-count">${gradeStudents.length} student${gradeStudents.length!==1?'s':''} · ${pct}% paid</div>
+      <div class="folder-paid-bar"><div class="folder-paid-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+
+  // "＋ Create Grade Folder" tile — always last in the grid
+  var addTile = `<div class="folder-card" onclick="openAddFolderModal()"
+      style="border:2px dashed var(--slate-200);background:var(--slate-50);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:130px;">
+    <span style="font-size:2rem;">📁</span>
+    <span style="font-size:.82rem;font-weight:700;color:var(--blue-core);">＋ Create Grade Folder</span>
+    <span style="font-size:.7rem;color:var(--slate-400);">Add a new grade class</span>
+  </div>`;
+
+  document.getElementById('gradeFolderGrid').innerHTML = gradeCards + addTile;
+}
+
+function deleteGradeFolder(gradeIdx) {
+  const grade = grades[gradeIdx];
+  if (!grade) return;
+  const msg = grade.students.length > 0
+    ? `Delete grade "${grade.name}" and all ${grade.students.length} student(s) inside?`
+    : `Delete empty grade folder "${grade.name}"?`;
+  confirmDialog(msg).then(ok => {
+    if (!ok) return;
+    grades.splice(gradeIdx, 1);
+    saveData();
+    _browseGrade = null;
+    if (document.getElementById('gradeView').style.display !== 'none') {
+      renderGradeFolders(_browseYear, _browseMonth);
+    }
+    syncAllViews();
+    showToast(`🗑 Grade "${grade.name}" deleted`, 'info');
+  });
+}
+
+function filterStudents() { renderStudentTable(); }
+
+// ── Toggle paid for a specific month — uid + YYYY-MM based ──
+function togglePaid(uid, yearMonth) {
+  const found = findStudentByUid(uid);
+  if (!found) { showToast('Student not found', 'warning'); return; }
+  const s = found.student;
+  if (!s.payments) s.payments = {};
+
+  const enrollMonthKey = s.enroll ? s.enroll.slice(0, 7) : null;
+  if (enrollMonthKey && yearMonth === enrollMonthKey) {
+    showToast('⚠️ Enrollment month is always paid — cannot change', 'warning');
+    return;
+  }
+
+  if (s.payments[yearMonth]) {
+    // Unpay this month
+    delete s.payments[yearMonth];
+    showToast(`↩ ${s.name} — ${yearMonth} marked as unpaid`, 'warning');
+  } else {
+    // Pay this month — use today as the paid date
+    s.payments[yearMonth] = todayISO();
+    showToast(`✅ ${s.name} — ${yearMonth} marked as paid!`, 'success');
+  }
+  saveData();
+  syncAllViews();
+}
+
+// ── Delete student — uid based ──
+async function deleteStudent(uid) {
+  const found = findStudentByUid(uid);
+  if (!found) { showToast('Student not found', 'warning'); return; }
+  const { gi, si, student } = found;
+  if (!await confirmDialog(`Remove ${student.name} from ${grades[gi].name}?`)) return;
+  grades[gi].students.splice(si, 1);
+  saveData();
+  showToast(`🗑 ${student.name} removed`, 'info');
+  syncAllViews();
+}
+
+// ══════════════════════════════════════════════════════
+//  ADD FOLDER
+// ══════════════════════════════════════════════════════
+function openAddFolderModal() {
+  document.getElementById('folderNameInput').value = '';
+  selectedEmoji = '📁';
+  document.querySelectorAll('.folder-emoji-opt').forEach((el,i) =>
+    el.style.borderColor = i===0 ? 'var(--blue-core)' : 'var(--slate-200)');
+  openModal('addFolderModal');
+}
+
+function selectEmoji(el, emoji) {
+  selectedEmoji = emoji;
+  document.querySelectorAll('.folder-emoji-opt').forEach(e => e.style.borderColor='var(--slate-200)');
+  el.style.borderColor = 'var(--blue-core)';
+}
+
+function addFolder() {
+  const name = document.getElementById('folderNameInput').value.trim();
+  if (!name) { showToast('Please enter a grade name','warning'); return; }
+  grades.push({ name, icon: selectedEmoji, students: [] });
+  saveData();
+  closeModal('addFolderModal');
+  syncAllViews();
+  showToast(`📁 ${name} created!`, 'success');
+}
+
+function openAddYearModal() {
+  const year = prompt('Create academic year folder (example: 2025-2026):');
+  if (!year) return;
+  addYearFolder(year.trim());
+}
+
+function addYearFolder(yearStr) {
+  if (!yearStr) { showToast('Please enter a year range','warning'); return; }
+  if (!/^\d{4}-\d{4}$/.test(yearStr)) { showToast('Year format should be YYYY-YYYY','warning'); return; }
+  const [start, end] = yearStr.split('-').map(Number);
+  if (end !== start + 1) { showToast('Year end must be start + 1','warning'); return; }
+  if (getAcademicYears().includes(yearStr)) { showToast('That academic year already exists','warning'); return; }
+  explicitAcademicYears.push(yearStr);
+  saveData();
+  syncAllViews();
+  showToast(`📁 Academic year ${yearStr} added`, 'success');
+}
+
+function deleteYearFolder(ayStr) {
+  if (!explicitAcademicYears.includes(ayStr)) return;
+  confirmDialog(`Delete unused academic year ${ayStr}?`).then(ok => {
+    if (!ok) return;
+    explicitAcademicYears = explicitAcademicYears.filter(y => y !== ayStr);
+    saveData();
+    if (_browseYear === ayStr) backToYears();
+    syncAllViews();
+    showToast(`🗑 Academic year ${ayStr} deleted`, 'info');
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  SYNC ALL VIEWS — re-render whatever level is visible
+//  Call after any data mutation to keep UI in sync
+//  without forcing the user back to the top.
+// ══════════════════════════════════════════════════════
+function syncAllViews() {
+  // Always update dashboard stats
+  updateDashboard();
+
+  // Re-render whatever level of the folder tree is currently visible
+  const yearVisible    = document.getElementById('yearView').style.display    !== 'none';
+  const monthVisible   = document.getElementById('monthView').style.display   !== 'none';
+  const gradeVisible   = document.getElementById('gradeView').style.display   !== 'none';
+  const studentVisible = document.getElementById('studentView').style.display !== 'none';
+
+  if (studentVisible && _browseYear !== null && _browseMonth !== null) {
+    renderStudentTable();
+    renderGradeFolders(_browseYear, _browseMonth);   // keep grade counts current
+    renderMonthFolders(_browseYear);                 // keep month counts current
+    renderYearFolders();                             // keep year counts current
+  } else if (gradeVisible && _browseYear !== null && _browseMonth !== null) {
+    renderGradeFolders(_browseYear, _browseMonth);
+    renderMonthFolders(_browseYear);
+    renderYearFolders();
+  } else if (monthVisible && _browseYear !== null) {
+    renderMonthFolders(_browseYear);
+    renderYearFolders();
+  } else {
+    renderYearFolders();
+  }
+
+  // Keep grade select in modals up to date
+  updateGradeSelect();
+}
+
+// ══════════════════════════════════════════════════════
+//  ADD STUDENT
+// ══════════════════════════════════════════════════════
+function updateGradeSelect() {
+  const sel = document.getElementById('sGrade');
+  sel.innerHTML = grades.map((g,i) => `<option value="${i}">${g.name}</option>`).join('');
+  if (currentFolderIndex !== null) sel.value = currentFolderIndex;
+}
+
+// Live preview of next due date in the Add Student modal
+function previewNextDue() {
+  const enrollVal = document.getElementById('sEnroll').value;
+  const el = document.getElementById('nextDuePreview');
+  if (!enrollVal) { el.textContent = '—'; return; }
+  const d = parseLocalDate(enrollVal);
+  if (!d) { el.textContent = '—'; return; }
+  // Next due = same day, one month after enrollment
+  const next = new Date(d.getFullYear(), d.getMonth() + 1, d.getDate());
+  el.textContent = next.toLocaleDateString('en-GB', { day:'2-digit', month:'long', year:'numeric' });
+}
+
+function openAddStudentModal() {
+  document.getElementById('sName').value          = '';
+  document.getElementById('sGender').value        = 'Male';
+  document.getElementById('sParentContact').value = '';
+  document.getElementById('sEnroll').value        = todayISO();
+  updateGradeSelect();
+  if (_browseGrade !== null && grades[_browseGrade]) {
+    document.getElementById('sGrade').value = _browseGrade;
+  }
+  previewNextDue(); // show preview for today's date
+  openModal('addStudentModal');
+}
+
+function addStudent() {
+  const name          = document.getElementById('sName').value.trim();
+  const gender        = document.getElementById('sGender').value;
+  const enroll        = document.getElementById('sEnroll').value;
+  const parentContact = document.getElementById('sParentContact').value.trim();
+  const gradeIdx      = parseInt(document.getElementById('sGrade').value);
+
+  if (!name)   { showToast('Please enter student name','warning'); return; }
+  if (!enroll) { showToast('Please select enrolled date','warning'); return; }
+  if (isNaN(gradeIdx) || !grades[gradeIdx]) { showToast('Please select a grade','warning'); return; }
+
+  // deadlineDay = same day of month as enrollment (capped at 28 to avoid month-end issues)
+  const enrollDate  = parseLocalDate(enroll);
+  const deadlineDay = Math.min(28, enrollDate.getDate());
+  const enrollMonthKey = enroll.slice(0, 7); // "YYYY-MM"
+
+  // Enrollment month is already paid — store it in payments map
+  const newStudent = {
+    uid: nextUid(), id: genId(),
+    name, gender, enroll, parentContact,
+    deadlineDay,
+    payments: { [enrollMonthKey]: enroll }  // enroll month = paid on enroll date
+  };
+  grades[gradeIdx].students.push(newStudent);
+  saveData();
+  closeModal('addStudentModal');
+  syncAllViews();
+  showToast(`👤 ${name} added — enrolled & paid for ${enrollDate.toLocaleDateString('en-GB',{month:'long',year:'numeric'})}!`, 'success');
+}
+
+// ══════════════════════════════════════════════════════
+//  REPORTS
+// ══════════════════════════════════════════════════════
+function updateReports() {
+  const all     = getAllStudents();
+  const today   = localToday();
+  const curKey  = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;
+  const paidNow = all.filter(s => s.payments && s.payments[curKey]);
+  const overdue = all.filter(s => !(s.payments && s.payments[curKey]) && daysUntil(getCurrentDeadline(s)) < 0).length;
+  document.getElementById('r-total').textContent   = all.length;
+  document.getElementById('r-paid').textContent    = paidNow.length;
+  document.getElementById('r-unpaid').textContent  = all.length - paidNow.length;
+
+  const maxStu = Math.max(...grades.map(g => g.students.length), 1);
+  document.getElementById('barChart').innerHTML = grades.map(g => {
+    const pct = g.students.length
+      ? Math.round(g.students.filter(s => s.payments && s.payments[curKey]).length / g.students.length * 100)
+      : 0;
+    const h = Math.round(g.students.length / maxStu * 100);
+    return `<div class="bar-col"><div class="bar-val">${pct}%</div><div class="bar-fill" style="height:${h}%" title="${g.name}: ${pct}% paid this month"></div></div>`;
+  }).join('');
+  document.getElementById('barLabels').innerHTML = grades.map(g =>
+    `<div class="bar-lbl" style="flex:1;text-align:center">${g.name}</div>`).join('');
+
+  document.getElementById('reportTableBody').innerHTML = all.map(s => {
+    const dl   = getCurrentDeadline(s);
+    const paidThisMonth = !!(s.payments && s.payments[curKey]);
+    const days = paidThisMonth ? null : daysUntil(dl);
+    let st;
+    if (paidThisMonth) {
+      st = `<span class="status-badge status-paid">✓ Paid (${curKey})</span>`;
+    } else if (days !== null && days < 0) {
+      st = `<span class="status-badge status-unpaid">❗ Overdue ${Math.abs(days)}d</span>`;
+    } else if (days !== null && days <= 7) {
+      st = `<span class="status-badge status-due">⚠ Due Soon</span>`;
+    } else {
+      st = `<span class="status-badge status-unpaid">⏳ Pending</span>`;
+    }
+    const lastPaidEntry = Object.entries(s.payments || {}).sort((a,b) => b[0].localeCompare(a[0]))[0];
+    const lastPaidDate  = lastPaidEntry ? lastPaidEntry[1] : null;
+    return `<tr>
+      <td>${s.name}</td><td>${s.gradeName}</td><td>${s.gender}</td>
+      <td>${fmtDate(s.enroll)}</td>
+      <td>📞 ${s.parentContact||'—'}</td>
+      <td>${lastPaidDate ? fmtDate(lastPaidDate) : '—'}</td>
+      <td>${fmtDate(dl)} <small style="color:var(--slate-400)">day ${s.deadlineDay}</small></td>
+      <td>${st}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  MONTHLY REPORT DOWNLOAD
+// ══════════════════════════════════════════════════════
+function exportMonthlyReport() {
+  const now    = new Date();
+  const curKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const month  = now.toLocaleDateString('en-GB', { month:'long', year:'numeric' });
+  const all    = getAllStudents();
+  const paid   = all.filter(s => s.payments && s.payments[curKey]);
+  const unpaid = all.filter(s => !(s.payments && s.payments[curKey]));
+  const overdue  = unpaid.filter(s => daysUntil(getCurrentDeadline(s)) < 0);
+  const pending  = unpaid.filter(s => daysUntil(getCurrentDeadline(s)) >= 0);
+
+  const rows = [
+    [`CK Takhmao School Monthly Payment Report — ${month}`],
+    [`Generated: ${now.toLocaleString('en-GB')}`],
+    [`School: ${settings.schoolName}`],
+    [],
+    ['=== SUMMARY ==='],
+    ['Total Students', all.length],
+    ['Paid This Month', paid.length],
+    ['Unpaid / Pending', pending.length],
+    ['Overdue', overdue.length],
+    ['Payment Rate', all.length ? Math.round(paid.length/all.length*100)+'%' : '0%'],
+    [],
+    ['=== PAID STUDENTS ==='],
+    ['ID','Name','Grade','Gender','Enroll Date','Parent Contact','Paid Date','Monthly Due Day','Next Deadline'],
+    ...paid.map(s => [s.id, s.name, s.gradeName, s.gender, s.enroll, s.parentContact||'', s.payments[curKey]||'', 'Day '+s.deadlineDay, computeDeadline(s)||'']),
+    [],
+    ['=== OVERDUE STUDENTS ==='],
+    ['ID','Name','Grade','Gender','Enroll Date','Parent Contact','Deadline','Days Overdue'],
+    ...overdue.map(s => {
+      const dl = getCurrentDeadline(s);
+      return [s.id, s.name, s.gradeName, s.gender, s.enroll, s.parentContact||'', dl||'', Math.abs(daysUntil(dl))+'d overdue'];
+    }),
+    [],
+    ['=== PENDING STUDENTS ==='],
+    ['ID','Name','Grade','Gender','Enroll Date','Parent Contact','Deadline','Days Until Due'],
+    ...pending.map(s => {
+      const dl = getCurrentDeadline(s);
+      const d  = daysUntil(dl);
+      return [s.id, s.name, s.gradeName, s.gender, s.enroll, s.parentContact||'', dl||'', d === 0 ? 'Due today!' : d+'d left'];
+    }),
+    [],
+    ['=== BY GRADE ==='],
+    ['Grade','Total','Paid This Month','Overdue','Pending','Rate'],
+    ...grades.map(g => {
+      const t  = g.students.length;
+      const p  = g.students.filter(s => s.payments && s.payments[curKey]).length;
+      const ov = g.students.filter(s => !(s.payments && s.payments[curKey]) && daysUntil(getCurrentDeadline(s)) < 0).length;
+      return [g.name, t, p, ov, t-p-ov, t?Math.round(p/t*100)+'%':'0%'];
+    }),
+  ];
+
+  const csv = rows.map(r => Array.isArray(r) ? r.map(v=>`"${v}"`).join(',') : `"${r}"`).join('\n');
+  const filename = `CK Takhmao School_Monthly_Report_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}.csv`;
+  triggerDownload(csv, filename);
+  showToast(`📅 Monthly report downloaded!`, 'success');
+}
+
+function exportCSV() {
+  const all = getAllStudents();
+  const now = new Date();
+  const curKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const rows = [
+    ['ID','Name','Grade','Gender','Enroll Date','Parent Contact','Paid Months','Monthly Due Day','Next Deadline','Status'],
+    ...all.map(s => {
+      const paidThisMonth = !!(s.payments && s.payments[curKey]);
+      const dl   = getCurrentDeadline(s);
+      const days = paidThisMonth ? null : daysUntil(dl);
+      const status = paidThisMonth ? 'Paid' : days !== null && days < 0 ? 'Overdue' : days !== null && days <= 7 ? 'Due Soon' : 'Pending';
+      const paidMonths = Object.keys(s.payments || {}).sort().join('; ');
+      return [s.id, s.name, s.gradeName, s.gender, s.enroll, s.parentContact||'', paidMonths, s.deadlineDay, dl||'', status];
+    })
+  ];
+  const csv = rows.map(r => r.map(v=>`"${v}"`).join(',')).join('\n');
+  const filename = `CK Takhmao School_All_Students_${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}.csv`;
+  triggerDownload(csv, filename);
+  showToast('📊 CSV exported!', 'success');
+}
+
+function triggerDownload(csvContent, filename) {
+  // Prepend UTF-8 BOM so Excel opens accented/non-Latin characters correctly
+  const bom  = '\uFEFF';
+  const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+function updateAlerts() {
+  const all = getAllStudents();
+  const today = localToday();
+  const curKey = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;
+  const overdue = all.filter(s => !(s.payments && s.payments[curKey]) && daysUntil(getCurrentDeadline(s)) < 0);
+  const dueSoon = all.filter(s => !(s.payments && s.payments[curKey]) && daysUntil(getCurrentDeadline(s)) >= 0 && daysUntil(getCurrentDeadline(s)) <= 7);
+  const urgentList = [
+    ...overdue.sort((a,b) => daysUntil(getCurrentDeadline(a)) - daysUntil(getCurrentDeadline(b))),
+    ...dueSoon.sort((a,b) => daysUntil(getCurrentDeadline(a)) - daysUntil(getCurrentDeadline(b)))
+  ];
+
+  const listEl = document.getElementById('alertsList');
+  listEl.innerHTML = urgentList.length === 0
+    ? `<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">No students are nearly due</div></div>`
+    : `<div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Grade</th>
+              <th>Gender</th>
+              <th>Parent Contact</th>
+              <th>Deadline</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${urgentList.map(s => {
+              const dl = getCurrentDeadline(s), days = daysUntil(dl);
+              const status = days < 0 ? `❗ Overdue ${Math.abs(days)}d` : days === 0 ? '🔔 Due Today' : `⚠ ${days} days left`;
+              const cls = days < 0 ? 'status-unpaid' : 'status-due';
+              return `<tr>
+                <td>${s.name}</td>
+                <td>${s.gradeName}</td>
+                <td>${s.gender}</td>
+                <td>${s.parentContact || ''}</td>
+                <td>${fmtDate(dl)}</td>
+                <td><span class="status-badge ${cls}">${status}</span></td>
+                <td><button class="btn btn-sm" onclick="openEditStudentModal('${s.uid}')">Edit</button></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  MODAL HELPERS
+// ══════════════════════════════════════════════════════
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Close modal when clicking outside
+document.addEventListener('click', e => {
+  document.querySelectorAll('.modal-overlay.open').forEach(overlay => {
+    if (e.target === overlay) closeModal(overlay.id);
+  });
+});
+
+// ══════════════════════════════════════════════════════
+//  NOTIFICATIONS
+// ══════════════════════════════════════════════════════
+function toggleNotif() { document.getElementById('notifPanel').classList.toggle('open'); }
+document.addEventListener('click', e => {
+  const panel = document.getElementById('notifPanel');
+  if (panel && !panel.contains(e.target) && !e.target.closest('.notif-btn'))
+    panel.classList.remove('open');
+});
+
+// ══════════════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════════════
+function showToast(msg, type='info') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.cssText += 'opacity:0;transform:translateX(100%);transition:.3s'; }, 3000);
+  setTimeout(() => t.remove(), 3400);
+}
+
+// ══════════════════════════════════════════════════════
+//  BACKUP & RESTORE
+// ══════════════════════════════════════════════════════
+function exportSecureBackup() {
+  try {
+    if (exportDataAsJSON()) {
+      showToast('✅ Secure backup created and downloaded!', 'success');
+    } else {
+      showToast('❌ Backup failed. Please try again.', 'danger');
+    }
+  } catch(e) {
+    console.error('Backup error:', e);
+    showToast('❌ Backup error: ' + e.message, 'danger');
+  }
+}
+
+function importSecureBackup() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.bak,.txt';
+  input.onchange = async function(e) {
+    try {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = async function(event) {
+        try {
+          const encrypted = event.target.result;
+          const backup = _encryptor.decrypt(encrypted);
+          
+          if (!backup) {
+            showToast('❌ Invalid backup file or wrong password.', 'danger');
+            return;
+          }
+          
+          if (!_checksumUtil.verify(backup.data, backup.checksum)) {
+            showToast('⚠️ Backup file may be corrupted. Checksum mismatch.', 'warning');
+            if (!await confirmDialog('Checksum failed. Load anyway?')) return;
+          }
+          
+          if (!await confirmDialog('⚠️ This will replace your current data. Are you sure?')) return;
+          
+          // Restore backup
+          const b = backup.data;
+          grades = b.grades || [];
+          settings = Object.assign(settings, b.settings || {});
+          explicitAcademicYears = b.explicitAcademicYears || [];
+          _uidCounter = b._uidCounter || 1;
+          _idCounter = b._idCounter || 13;
+          
+          saveData();
+          syncAllViews();
+          updateDashboard();
+          showToast('✅ Backup restored successfully!', 'success');
+        } catch(err) {
+          console.error('Restore error:', err);
+          showToast('❌ Failed to restore backup: ' + err.message, 'danger');
+        }
+      };
+      reader.readAsText(file);
+    } catch(err) {
+      console.error('Import error:', err);
+      showToast('❌ Error reading backup file.', 'danger');
+    }
+  };
+  input.click();
+}
+
+// ══════════════════════════════════════════════════════
+//  RESET
+// ══════════════════════════════════════════════════════
+async function confirmReset() {
+  if (!await confirmDialog('⚠️ This will delete ALL grades and students. A backup will be created first. Continue?')) return;
+  
+  // Automatically create a backup before resetting
+  const backupSuccess = createDataBackup();
+  if (!backupSuccess) {
+    showToast('⚠️ Could not create automatic backup. Reset cancelled for safety.', 'warning');
+    return;
+  }
+  
+  grades = [];
+  currentFolderIndex = null;
+  _browseYear = null; _browseMonth = null;
+  _uidCounter = 1; _idCounter = 13;
+  explicitAcademicYears = [];
+  saveData();
+  document.getElementById('yearView').style.display  = '';
+  document.getElementById('monthView').style.display = 'none';
+  document.getElementById('studentView').style.display = 'none';
+  renderYearFolders();
+  updateDashboard();
+  showToast('✅ All data has been reset. Automatic backup was created.', 'success');
+}
+
+// ══════════════════════════════════════════════════════
+//  EDIT STUDENT
+// ══════════════════════════════════════════════════════
+let _editingUid = null;
+
+function openEditStudentModal(uid) {
+  const found = findStudentByUid(uid);
+  if (!found) return;
+  const s = found.student;
+  _editingUid = uid;
+  document.getElementById('eName').value          = s.name;
+  document.getElementById('eGender').value        = s.gender;
+  document.getElementById('eEnroll').value        = s.enroll || '';
+  document.getElementById('eParentContact').value = s.parentContact || '';
+  document.getElementById('eNextDue').value   = s.enroll ? (() => {
+    const d = parseLocalDate(s.enroll);
+    const next = new Date(d.getFullYear(), d.getMonth() + 1, s.deadlineDay);
+    return next.toISOString().slice(0, 10);
+  })() : '';
+
+  // Grade select
+  const sel = document.getElementById('eGrade');
+  sel.innerHTML = grades.map((g,i) => `<option value="${i}">${g.name}</option>`).join('');
+  sel.value = found.gi;
+
+  openModal('editStudentModal');
+}
+
+function saveEditStudent() {
+  if (_editingUid === null) return;
+  const found = findStudentByUid(_editingUid);
+  if (!found) { showToast('Student not found','warning'); return; }
+  const { gi, si } = found;
+  const s = grades[gi].students[si];
+
+  const name          = document.getElementById('eName').value.trim();
+  const gender        = document.getElementById('eGender').value;
+  const enroll        = document.getElementById('eEnroll').value;
+  const parentContact = document.getElementById('eParentContact').value.trim();
+  const deadlineDay   = enroll ? Math.min(28, parseLocalDate(enroll).getDate()) : s.deadlineDay;
+  const newGradeIdx   = parseInt(document.getElementById('eGrade').value);
+
+  if (!name) { showToast('Please enter student name','warning'); return; }
+
+  // Preserve existing payments map; update other fields only
+  const updated = { ...s, name, gender, enroll, parentContact, deadlineDay };
+  // Ensure enroll month is always in payments
+  if (enroll) {
+    const em = enroll.slice(0, 7);
+    if (!updated.payments) updated.payments = {};
+    if (!updated.payments[em]) updated.payments[em] = enroll;
+  }
+  // Remove any legacy fields
+  delete updated.paid;
+  delete updated.paidDate;
+
+  // Move to different grade if changed
+  if (newGradeIdx !== gi) {
+    grades[gi].students.splice(si, 1);
+    grades[newGradeIdx].students.push(updated);
+  } else {
+    grades[gi].students[si] = updated;
+  }
+
+  closeModal('editStudentModal');
+  _editingUid = null;
+  saveData();
+  syncAllViews();
+  showToast(`✏️ ${name} updated!`, 'success');
+}
+
+// ══════════════════════════════════════════════════════
+//  EDIT / DELETE GRADE
+// ══════════════════════════════════════════════════════
+let _editingGradeIdx = null;
+
+function openEditFolderModal(idx) {
+  _editingGradeIdx = idx;
+  const g = grades[idx];
+  document.getElementById('editFolderNameInput').value = g.name;
+  selectedEmoji = g.icon;
+  document.querySelectorAll('.edit-folder-emoji-opt').forEach(el => {
+    el.style.borderColor = el.dataset.emoji === g.icon ? 'var(--blue-core)' : 'var(--slate-200)';
+  });
+  openModal('editFolderModal');
+}
+
+function selectEditEmoji(el, emoji) {
+  selectedEmoji = emoji;
+  document.querySelectorAll('.edit-folder-emoji-opt').forEach(e => e.style.borderColor='var(--slate-200)');
+  el.style.borderColor = 'var(--blue-core)';
+}
+
+function saveEditFolder() {
+  if (_editingGradeIdx === null) return;
+  const name = document.getElementById('editFolderNameInput').value.trim();
+  if (!name) { showToast('Please enter a grade name','warning'); return; }
+  grades[_editingGradeIdx].name = name;
+  grades[_editingGradeIdx].icon = selectedEmoji;
+  saveData();
+  closeModal('editFolderModal');
+  syncAllViews();
+  showToast(`✏️ Grade updated!`, 'success');
+  _editingGradeIdx = null;
+}
+
+async function deleteGrade(idx) {
+  const g = grades[idx];
+  if (!await confirmDialog(`Delete grade "${g.name}" and all ${g.students.length} student(s) in it?`)) return;
+  grades.splice(idx, 1);
+  saveData();
+  backToYears();
+  updateDashboard();
+  showToast(`🗑 Grade "${g.name}" deleted`, 'info');
+}
+
+// ══════════════════════════════════════════════════════
+//  EXPORT MONTH CSV
+// ══════════════════════════════════════════════════════
+function exportMonthCSV() {
+  if (_browseYear === null || _browseMonth === null) return;
+  const { start, end } = parseAcYear(_browseYear);
+  const calYear = _browseMonth >= 8 ? start : end;
+  const monthLabel = MONTH_NAMES_FULL[_browseMonth] + ' ' + calYear;
+  const students = getStudentsForMonth(_browseYear, _browseMonth);
+  const now = new Date();
+  const rows = [
+    [`CK Takhmao School Payment Report — ${monthLabel}`],
+    [`Generated: ${now.toLocaleString('en-GB')}`],
+    [`School: ${settings.schoolName}`],
+    [],
+    ['ID','Name','Grade','Gender','Parent Contact','Pay Date','Deadline','Status'],
+    ...students.map(s => [
+      s.id, s.name, s.gradeName, s.gender, s.parentContact||'',
+      s.paidDate||'', s.deadline||'',
+      s.paidForMonth ? 'Paid' : s.monthStatus === 'overdue' ? 'Overdue' : s.monthStatus === 'future' ? 'Upcoming' : 'Pending'
+    ])
+  ];
+  const csv = rows.map(r => Array.isArray(r) ? r.map(v=>`"${v}"`).join(',') : `"${r}"`).join('\n');
+  const filename = `CK Takhmao School_${_browseYear}_${MONTH_NAMES_SHORT[_browseMonth]}_${calYear}.csv`;
+  triggerDownload(csv, filename);
+  showToast(`📊 ${monthLabel} CSV exported!`, 'success');
+}
+
+// Keep legacy exportGradeCSV as no-op (grade editing still works via modal)
+function exportGradeCSV() { exportMonthCSV(); }
+
+// ══════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════
+function init() {
+  document.getElementById('today-date').textContent =
+    'Today: ' + new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  document.getElementById('headerYear').textContent = settings.academicYear;
+  // Restore settings UI fields
+  const spd = document.getElementById('defaultPayDay');
+  const sn  = document.getElementById('schoolName');
+  const ay  = document.getElementById('academicYear');
+  if (spd) spd.value = settings.defaultPayDay;
+  if (sn)  sn.value  = settings.schoolName;
+  if (ay)  ay.value  = settings.academicYear;
+  updateDashboard();
+  renderYearFolders();
+}
+
+// ── Bootstrap: check for saved session, then run init if already logged in ──
+checkAutoLogin();
+if (!document.getElementById('appShell').classList.contains('hidden')) {
+  init();
+}
+</script>
+</body>
+</html>
