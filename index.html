@@ -82,15 +82,15 @@
     margin-bottom: 40px;
   }
   .login-logo-icon {
-    width: 130px; height: auto;
-    background: transparent;
-    border-radius: 0;
-    display: flex; align-items: center; justify-content: center;
-    overflow: visible;
-    padding: 0;
-    box-shadow: none;
-    border: none;
-  }
+      width: 160px; height: auto;
+      background: transparent;
+      border-radius: 0;
+      display: flex; align-items: center; justify-content: center;
+      overflow: visible;
+      padding: 0;
+      box-shadow: none;
+      border: none;
+    }
   .login-logo-icon img {
     width: 100%;
     height: auto;
@@ -1468,12 +1468,16 @@
     </div>
 
     <!-- Remember Me + Forgot -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;margin-bottom:2px;">
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.82rem;color:var(--slate-600);font-weight:500;">
-        <input type="checkbox" id="rememberMe" style="width:16px;height:16px;accent-color:var(--blue-core);cursor:pointer;" />
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;margin-bottom:4px;">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:.85rem;color:var(--slate-600);font-weight:600;">
+        <input type="checkbox" id="rememberMe" style="width:18px;height:16px;accent-color:var(--blue-core);cursor:pointer;" />
         Remember me for 30 days
       </label>
-      <span style="font-size:.78rem;color:var(--slate-400);">Secure · Auto sign-out after 30 days</span>
+      <div style="display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--slate-400);padding-left:2px;">
+        <span style="color:var(--green);font-weight:700;">Secure</span>
+        <span style="opacity:0.6;">·</span>
+        <span>Auto sign-out after 30 days</span>
+      </div>
     </div>
 
     <div class="login-error" id="loginError">❌ Incorrect email or password. Please try again.</div>
