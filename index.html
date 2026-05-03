@@ -54,22 +54,12 @@
   }
 
   html {
-    font-size: 16px; /* Base for rem */
+    font-size: clamp(13px, 1.1vw + 0.5vh, 17px);
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
 
-  @media (max-width: 64rem) { /* 1024px */
-    html { font-size: 15px; }
-  }
-
-  @media (max-width: 48rem) { /* 768px */
-    html { font-size: 14.5px; }
-  }
-
-  @media (max-width: 30rem) { /* 480px */
-    html { font-size: 14px; }
-  }
+  /* Remove stepped breakpoint font sizes — clamp() handles it fluidly above */
 
   html, body {
     width: 100%;
@@ -186,7 +176,7 @@
     text-align: center;
   }
   .login-sub { 
-    font-size: 0.825rem; 
+    font-size: clamp(0.75rem, 2vw, 0.875rem); 
     color: var(--slate-400); 
     margin-bottom: 1.75rem; 
     text-align: center;
@@ -231,6 +221,14 @@
   .login-input[type="password"] {
     padding-right: 3.5rem;
   }
+  /* Hide browser-native password reveal button (Edge, IE, Chrome) */
+  .login-input[type="password"]::-ms-reveal,
+  .login-input[type="password"]::-ms-clear,
+  .login-input::-webkit-credentials-auto-fill-button,
+  .login-input::-webkit-textfield-decoration-container { display: none !important; }
+  input[type="password"]::-webkit-contacts-auto-fill-button,
+  input[type="password"]::-webkit-credentials-auto-fill-button { display: none !important; }
+  input[type="password"]::-ms-reveal { display: none !important; }
   .login-input:focus {
     border-color: var(--blue-core);
     box-shadow: 0 0 0 4px rgba(37,99,235,.1);
@@ -758,7 +756,7 @@
     letter-spacing: -.03em;
   }
   .section-sub {
-    font-size: .8rem;
+    font-size: clamp(0.7rem, 1.3vw, 0.85rem);
     color: var(--slate-400);
     margin-top: 2px;
     font-weight: 400;
@@ -796,7 +794,7 @@
   .stat-card.alert::before   { background: var(--amber); }
 
   .stat-label {
-    font-size: 0.75rem;
+    font-size: clamp(0.65rem, 1.2vw, 0.78rem);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .08em;
@@ -940,7 +938,7 @@
     justify-content: space-between;
   }
   .card-title {
-    font-size: .95rem;
+    font-size: clamp(0.85rem, 1.5vw, 1rem);
     font-weight: 700;
     color: var(--navy);
     display: flex;
@@ -1138,8 +1136,8 @@
   }
 
   .folder-icon { font-size: 2.75rem; margin-bottom: 0.625rem; display: block; }
-  .folder-name { font-size: .9rem; font-weight: 700; color: var(--navy); margin-bottom: 0.25rem; }
-  .folder-count { font-size: .75rem; color: var(--slate-400); font-weight: 600; }
+  .folder-name { font-size: clamp(0.8rem, 1.4vw, 0.95rem); font-weight: 700; color: var(--navy); margin-bottom: 0.25rem; }
+  .folder-count { font-size: clamp(0.65rem, 1vw, 0.78rem); color: var(--slate-400); font-weight: 600; }
   .folder-paid-bar {
     margin-top: 0.75rem;
     height: 0.25rem;
@@ -1205,7 +1203,7 @@
   }
   td {
     padding: 0.875rem 1rem;
-    font-size: .875rem;
+    font-size: clamp(0.78rem, 1.4vw, 0.9rem);
     color: var(--slate-800);
     border-bottom: 1px solid var(--slate-100);
     vertical-align: middle;
@@ -1223,8 +1221,8 @@
     font-size: .85rem;
     flex-shrink: 0;
   }
-  .s-name { font-weight: 700; font-size: .9rem; color: var(--navy); }
-  .s-id { font-size: .75rem; color: var(--slate-400); font-family: 'DM Mono', monospace; font-weight: 500; }
+  .s-name { font-weight: 700; font-size: clamp(0.8rem, 1.4vw, 0.95rem); color: var(--navy); }
+  .s-id { font-size: clamp(0.65rem, 1vw, 0.78rem); color: var(--slate-400); font-family: 'DM Mono', monospace; font-weight: 500; }
 
   .gender-badge {
     display: inline-flex;
