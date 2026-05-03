@@ -37,11 +37,18 @@
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+    position: relative;
+  }
+
   body {
     font-family: 'Sora', sans-serif;
     background: var(--slate-100);
     color: var(--slate-800);
     min-height: 100vh;
+    min-height: 100dvh; /* Mobile browser height fix */
     display: flex;
     flex-direction: column;
   }
@@ -623,20 +630,32 @@
 
   @media (max-width: 768px) {
     header {
-      padding: 0 16px 0 80px; /* Space for mobile toggle */
+      padding: 0 16px 0 72px; /* Adjusted space for mobile toggle */
       height: 80px;
     }
     .header-logo-section {
       gap: 12px;
+      min-width: 0; /* Allow shrinking */
     }
     .logo-icon {
       height: 48px;
+      flex-shrink: 0;
+    }
+    .logo-text-wrapper {
+      min-width: 0;
+      overflow: hidden;
     }
     .sidebar-logo-text {
       font-size: 1.1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .sidebar-logo-sub {
       font-size: 0.65rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .page-title-badge {
       display: none;
@@ -646,24 +665,34 @@
     }
     .section-header {
       flex-direction: column;
-      align-items: flex-start;
+      align-items: stretch;
       gap: 16px;
+    }
+    .section-header .flex {
+      justify-content: flex-start;
+      gap: 12px;
     }
   }
 
   @media (max-width: 480px) {
     header {
       height: 72px;
+      padding-left: 64px;
+    }
+    .mobile-toggle-btn {
+      top: 12px;
+      left: 12px;
+      width: 44px;
+      height: 44px;
     }
     .header-logo-section {
-      max-width: 140px;
-      overflow: hidden;
+      max-width: 160px;
     }
     .logo-icon {
       height: 40px;
     }
     .sidebar-logo-text {
-      font-size: 0.95rem;
+      font-size: 1rem;
     }
     .sidebar-logo-sub {
       display: none;
@@ -676,7 +705,15 @@
       display: none;
     }
     .header-right {
-      gap: 8px;
+      gap: 10px;
+    }
+    .user-profile {
+      padding: 4px;
+      border-radius: 50%;
+    }
+    .avatar {
+      width: 36px;
+      height: 36px;
     }
     .alert-banner {
       flex-direction: column;
@@ -1113,11 +1150,13 @@
 
   /* ── STUDENT TABLE ── */
   .table-wrap {
+    width: 100%;
     background: var(--white);
     border-radius: var(--radius);
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--slate-200);
     overflow: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
   table {
     width: 100%;
@@ -1408,13 +1447,14 @@
   /* ── NOTIFICATION PANEL ── */
   .notif-panel {
     position: fixed;
-    top: 70px; right: 16px;
+    top: 80px; right: 16px;
     width: 340px;
+    max-width: calc(100vw - 32px); /* Responsive width */
     background: var(--white);
     border-radius: var(--radius);
     box-shadow: var(--shadow-lg);
     border: 1px solid var(--slate-200);
-    z-index: 150;
+    z-index: 10001; /* Above mobile toggle */
     display: none;
     overflow: hidden;
   }
