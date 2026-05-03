@@ -92,9 +92,15 @@
     width: 100%;
     height: auto;
     object-fit: contain;
-    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));
+    /* High-fidelity rendering properties */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15)) contrast(1.05);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
+    will-change: transform, filter;
   }
   .login-logo-icon img:hover {
     transform: scale(1.08) rotate(-2deg);
@@ -215,7 +221,7 @@
   header {
     background: linear-gradient(135deg, var(--navy) 0%, var(--blue-deep) 60%, var(--blue-mid) 100%);
     padding: 0 24px;
-    height: 72px;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -228,14 +234,15 @@
   .logo {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     color: white;
     font-weight: 800;
-    font-size: 1.35rem;
+    font-size: 1.45rem;
     letter-spacing: -.02em;
   }
+
   .logo-icon {
-    height: 44px; width: auto;
+    height: 52px; width: auto;
     background: transparent;
     border-radius: 0;
     display: flex; align-items: center; justify-content: center;
@@ -246,12 +253,19 @@
     height: 100%;
     width: auto;
     object-fit: contain;
-    transition: all 0.3s ease;
+    /* Professional sharpness and rendering */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    filter: brightness(1.05) contrast(1.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    will-change: transform, filter;
   }
   .logo-icon img:hover {
-    transform: scale(1.1) brightness(1.1);
-    filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
+    transform: scale(1.05);
+    filter: brightness(1.2) contrast(1.1) drop-shadow(0 0 12px rgba(255,255,255,0.3));
   }
 
   .header-right {
