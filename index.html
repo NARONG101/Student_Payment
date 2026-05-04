@@ -651,14 +651,11 @@
     .sidebar-close-btn  { display: flex; }
     .content-wrapper { width: 100%; }
 
-    /* Bottom nav visible on tablet/mobile */
-    .mobile-bottom-nav { display: flex; }
+    /* Pad main for safe area only */
+    main { padding-bottom: env(safe-area-inset-bottom, 0.75rem); }
 
-    /* Pad main so content doesn't hide under bottom nav */
-    main { padding-bottom: calc(4.5rem + env(safe-area-inset-bottom)); }
-
-    /* Toast above bottom nav */
-    .toast-container { bottom: 5rem; right: 1rem; }
+    /* Toast stays at bottom right */
+    .toast-container { bottom: 1.5rem; right: 1rem; }
 
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
   }
@@ -761,13 +758,9 @@
     /* Report grid: 1 col */
     .report-grid { grid-template-columns: 1fr; }
 
-    /* Toast position above bottom nav */
-    .toast-container { bottom: 5.5rem; right: 0.75rem; left: 0.75rem; }
+    /* Toast position */
+    .toast-container { bottom: 1rem; right: 0.75rem; left: 0.75rem; }
     .toast { min-width: unset; width: 100%; }
-
-    /* Bottom nav: taller touch targets */
-    .mobile-bottom-nav { height: 4.25rem; }
-    main { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
   }
 
   /* ── Phone LANDSCAPE — sidebar drawer, wider content ── */
@@ -780,8 +773,7 @@
       width: 2.5rem; height: 2.5rem;
       font-size: 1.1rem;
     }
-    /* Hide bottom nav in landscape — sidebar drawer is enough */
-    .mobile-bottom-nav { display: none !important; }
+    /* No bottom nav — nothing extra needed */
     main { padding-bottom: var(--main-padding); }
     .toast-container { bottom: 1rem; right: 1rem; }
 
@@ -1717,62 +1709,7 @@
   .toggle.on { background: var(--blue-core); }
   .toggle.on::after { transform: translateX(1.25rem); }
 
-  /* ── MOBILE BOTTOM NAV ── */
-  .mobile-bottom-nav {
-    display: none; /* shown via media query below */
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: var(--white);
-    border-top: 1px solid var(--slate-200);
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
-    z-index: 200;
-    padding: 0 0.25rem;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    /* height includes safe area */
-    height: calc(4rem + env(safe-area-inset-bottom, 0px));
-  }
-  .mobile-bottom-nav-inner {
-    display: flex;
-    height: 100%;
-    align-items: stretch;
-  }
-  .mobile-nav-btn {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.2rem;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    color: var(--slate-400);
-    font-family: inherit;
-    font-size: 0.6rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    padding: 0.375rem 0.25rem;
-    border-radius: 0.75rem;
-    transition: all 0.18s;
-    position: relative;
-  }
-  .mobile-nav-btn .nav-icon {
-    font-size: 1.375rem;
-    line-height: 1;
-  }
-  .mobile-nav-btn.active {
-    color: var(--blue-core);
-  }
-  .mobile-nav-btn.active::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 15%; right: 15%;
-    height: 3px;
-    background: var(--blue-core);
-    border-radius: 0 0 3px 3px;
-  }
-  .mobile-nav-btn:active { transform: scale(0.92); }
+
 
   @media (max-width: 64rem) {
     .mobile-bottom-nav { display: flex; }
@@ -2376,27 +2313,7 @@
 <!-- SIDEBAR BACKDROP (mobile) -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-<!-- MOBILE BOTTOM NAV -->
-<nav class="mobile-bottom-nav" id="mobileBottomNav">
-  <div class="mobile-bottom-nav-inner">
-    <button class="mobile-nav-btn active" id="mbnav-dashboard" onclick="switchPageMobile('dashboard',this)">
-      <span class="nav-icon">📊</span>
-      <span>Dashboard</span>
-    </button>
-    <button class="mobile-nav-btn" id="mbnav-students" onclick="switchPageMobile('students',this)">
-      <span class="nav-icon">👥</span>
-      <span>Students</span>
-    </button>
-    <button class="mobile-nav-btn" id="mbnav-reports" onclick="switchPageMobile('reports',this)">
-      <span class="nav-icon">📝</span>
-      <span>Reports</span>
-    </button>
-    <button class="mobile-nav-btn" id="mbnav-settings" onclick="switchPageMobile('settings',this)">
-      <span class="nav-icon">⚙️</span>
-      <span>Settings</span>
-    </button>
-  </div>
-</nav>
+
 
 <!-- ── CONFIRM DIALOG MODAL ── -->
 <div class="modal-overlay" id="confirmModal">
@@ -3178,18 +3095,7 @@ window.addEventListener('resize', function() {
   }, 100);
 });
 
-function switchPageMobile(page, btn) {
-  const sidebarNavItem = document.getElementById('nav-' + page);
-  if (sidebarNavItem) switchPage(page, sidebarNavItem);
-  document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-}
 
-function syncBottomNav(page) {
-  document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
-  const btn = document.getElementById('mbnav-' + page);
-  if (btn) btn.classList.add('active');
-}
 
 function switchPage(page, navItem) {
   // Update sidebar nav items
@@ -3209,9 +3115,8 @@ function switchPage(page, navItem) {
   };
   document.getElementById('pageTitle').textContent = titles[page] || 'Dashboard Overview';
 
-  // Mobile: close sidebar and sync bottom nav
+  // Mobile: close sidebar on navigation
   closeSidebar();
-  syncBottomNav(page);
 
   // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
